@@ -11,10 +11,10 @@ Human operator reported complete:
 - Runbook § 1.1 — legal shell
 - Runbook § 1.2 — production accounts
 - Runbook § 1.3 — Discord control room
+- Runbook § 1.4 — token work frozen until after commerce launch
 
 Remaining Gate 0 confirmations:
 
-- Runbook § 1.4 — token work frozen until after commerce launch
 - non-secret operator identifiers supplied to Codex
 
 Completed after initial report:
@@ -22,6 +22,7 @@ Completed after initial report:
 - local Git identity configured
 - first repository commit completed: `a1ecf55`
 - GitHub `origin/main` synced: `b780e8f`
+- Discord approval recorded: `AO-APPROVAL-0001`
 
 ## Gate 1 — Static Site And Commerce Scaffold
 
