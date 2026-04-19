@@ -1,0 +1,73 @@
+# Local No. 001 Record
+
+## Identity
+
+- Local number: `001`
+- Concept sentence: `Local No. 001: founding artifact.`
+- Lifecycle state: `concept_draft`
+- Launch timestamp: pending human decision
+
+## Product
+
+- Approved blank: Gildan 5000 short-sleeve tee
+- Supplier: pending Printify selection
+- Print provider: pending Printify selection
+- Garment colorways: Black
+- Sizes: `S`, `M`, `L`, `XL`
+- Placement: back only
+- Print method: pending Printify selection
+
+## Inventory
+
+- Edition count: 100
+- Size allocation:
+  - `S`: 30
+  - `M`: 30
+  - `L`: 30
+  - `XL`: 10
+- Restock policy: no restocks
+
+## Commerce
+
+- Retail price: pending human decision
+- Cost estimate: pending Printify quote
+- Gross margin: pending human decision
+- Shipping profile: pending human approval
+- Tax settings: pending human approval
+- Stripe product ID: pending
+- Stripe price ID: pending
+- Printify product ID: pending
+
+## Assets
+
+- Editable source file: pending
+- Production file: pending
+- Production file checksum: pending
+- Front mockup: `assets/GILDAN5000_FRONT.png`
+- Back mockup: `assets/GILDAN5000_BACK.png`
+- Font list: Inter Semi Bold
+- Color list: black garment, ink print
+- External assets: none
+- License/source notes: no external imagery used
+
+## Copy Draft
+
+```text
+LOCAL NO. 001 TEE
+Issued by Local No. 001, [DATE].
+
+Black Gildan 5000 short-sleeve tee.
+Primary Organization mark printed on the back.
+Sizes S-XL. 100 units total.
+
+Edition: 100 units. No restocks.
+```
+
+## Review
+
+- Compliance review ID: pending
+- Approval ID: pending
+- Approved by: pending
+- Approval timestamp: pending
+- Proof/sample approved: no
+- Archive URL: pending

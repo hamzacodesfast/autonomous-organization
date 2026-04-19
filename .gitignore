@@ -1,0 +1,18 @@
+# Local secrets and private operator docs
+.env
+.env.*
+!.env.example
+OPERATOR_REGISTER
+OPERATOR_REGISTER.*
+
+# Dependency, build, and tool output
+node_modules/
+dist/
+build/
+.next/
+.vercel/
+coverage/
+
+# Local machine noise
+.DS_Store
+Thumbs.db
