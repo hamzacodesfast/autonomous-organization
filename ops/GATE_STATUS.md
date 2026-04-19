@@ -16,8 +16,11 @@ Remaining Gate 0 confirmations:
 
 - Runbook § 1.4 — token work frozen until after commerce launch
 - non-secret operator identifiers supplied to Codex
+
+Completed after initial report:
+
 - local Git identity configured
-- first repository commit completed
+- first repository commit completed: `a1ecf55`
 
 ## Gate 1 — Static Site And Commerce Scaffold
 
