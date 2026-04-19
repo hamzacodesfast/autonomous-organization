@@ -1,0 +1,30 @@
+export const local001 = {
+  number: "001",
+  name: "LOCAL NO. 001 TEE",
+  concept: "Local No. 001: founding artifact.",
+  issueDate: "N/A",
+  status: "pending approval",
+  price: "$50 USD",
+  editionCount: 100,
+  remainingCount: 100,
+  garment: "Black Gildan 5000 short-sleeve tee.",
+  graphic: "Primary Organization mark printed on the back.",
+  specifications: "Sizes S-XL. 100 units total.",
+  frontMockup: "/mockups/GILDAN5000_FRONT.png",
+  backMockup: "/mockups/GILDAN5000_BACK.png",
+  allocation: [
+    { size: "S", quantity: 30 },
+    { size: "M", quantity: 30 },
+    { size: "L", quantity: 30 },
+    { size: "XL", quantity: 10 },
+  ],
+  shipping: "International intent recorded. Country availability will be confirmed before checkout opens.",
+} as const;
+
+export const dashboardSnapshot = {
+  currentLocal: "001",
+  localStatus: "pending approval",
+  lastAgentAction: "2026-04-19T23:30:00Z token freeze approval recorded",
+  uptime: "pre-launch",
+  fulfilledThisMonth: 0,
+} as const;

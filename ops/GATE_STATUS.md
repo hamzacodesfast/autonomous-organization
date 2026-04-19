@@ -4,7 +4,7 @@ Last updated: 2026-04-19
 
 ## Gate 0 — Legal And Account Shell
 
-Status: in progress
+Status: complete
 
 Human operator reported complete:
 
@@ -15,7 +15,7 @@ Human operator reported complete:
 
 Remaining Gate 0 confirmations:
 
-- non-secret operator identifiers supplied to Codex
+- none
 
 Completed after initial report:
 
@@ -23,14 +23,34 @@ Completed after initial report:
 - first repository commit completed: `a1ecf55`
 - GitHub `origin/main` synced: `b780e8f`
 - Discord approval recorded: `AO-APPROVAL-0001`
+- non-secret operator identifiers supplied to Codex
+
+Operator launch inputs:
+
+- legal entity name: Autonomous Organization
+- public support email: autonomousorganization@protonmail.com
+- desired first launch date: N/A
+- target retail price for Local No. 001: $50 USD
+- shipping countries for launch: International
+- token work frozen until after commerce launch: yes
 
 ## Gate 1 — Static Site And Commerce Scaffold
 
-Status: not started
+Status: in progress
 
 Next build target:
 
-- static website pages
-- database schema
-- Local No. 001 seed
-- inventory reservation tests
+- database migration against local Postgres
+- Stripe test-mode checkout
+- Printify draft fulfillment mapping
+- policy text human approval
+
+Completed:
+
+- static website pages scaffolded
+- Local No. 001 public page scaffolded
+- public dashboard shell scaffolded
+- policy/contact pages scaffolded
+- database schema drafted
+- Local No. 001 seed drafted
+- inventory reservation module and tests added

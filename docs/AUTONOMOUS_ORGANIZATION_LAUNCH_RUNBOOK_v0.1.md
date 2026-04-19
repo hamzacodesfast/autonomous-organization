@@ -195,8 +195,8 @@ git branch -m main
 mkdir -p app docs ops scripts assets/locals/001 source/locals/001
 mv AUTONOMOUS_ORGANIZATION_BRAND_SPEC_v0.2.md docs/
 cp docs/AUTONOMOUS_ORGANIZATION_BRAND_SPEC_v0.2.md docs/AUTONOMOUS_ORGANIZATION_BRAND_SPEC.md
-cp Mockups/GILDAN5000_FRONT.png assets/
-cp Mockups/GILDAN5000_BACK.png assets/
+cp mockups/GILDAN5000_FRONT.png assets/
+cp mockups/GILDAN5000_BACK.png assets/
 ```
 
 Create the first commit only after `.gitignore` exists and no secrets are present.

@@ -12,6 +12,7 @@ build/
 .next/
 .vercel/
 coverage/
+tsconfig.tsbuildinfo
 
 # Local machine noise
 .DS_Store

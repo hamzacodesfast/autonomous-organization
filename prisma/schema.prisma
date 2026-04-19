@@ -1,0 +1,258 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum LocalState {
+  CONCEPT_DRAFT
+  DESIGN_DRAFT
+  COMPLIANCE_REVIEW
+  COSTING_REVIEW
+  HUMAN_APPROVAL
+  SCHEDULED
+  LIVE
+  FULFILLMENT
+  ARCHIVED
+  RETIRED
+}
+
+enum ReservationStatus {
+  ACTIVE
+  ALLOCATED
+  EXPIRED
+  CANCELLED
+}
+
+enum OrderStatus {
+  DRAFT
+  PAID
+  FULFILLMENT_PENDING
+  FULFILLED
+  CANCELLED
+  REFUNDED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum FulfillmentStatus {
+  NOT_SUBMITTED
+  SUBMITTED
+  IN_PRODUCTION
+  SHIPPED
+  DELIVERED
+  FAILED
+}
+
+enum ApprovalDecision {
+  APPROVED
+  REJECTED
+  NEEDS_CHANGES
+}
+
+enum ActionState {
+  SUCCESS
+  FAILURE
+  ROLLBACK
+}
+
+model Local {
+  id                 Int       @id @default(autoincrement())
+  localNumber        String    @unique
+  conceptSentence    String
+  state              LocalState
+  approvedBlank      String
+  supplier           String?
+  printProvider      String?
+  garmentColorways   String[]
+  editionCount       Int
+  retailPriceCents   Int
+  currency           String    @default("USD")
+  launchTimestamp    DateTime?
+  productCopy        String?
+  socialCopy         String?
+  sourceLicenseNotes String?
+  archiveUrl         String?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  skus        LocalSku[]
+  assets      Asset[]
+  approvals   Approval[]
+  actionLogs  ActionLog[]
+  orderItems  OrderItem[]
+}
+
+model LocalSku {
+  id              Int      @id @default(autoincrement())
+  localId         Int
+  sku             String   @unique
+  size            String
+  color           String
+  editionCeiling  Int
+  allocatedCount  Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  local        Local                  @relation(fields: [localId], references: [id], onDelete: Cascade)
+  reservations InventoryReservation[]
+  orderItems   OrderItem[]
+
+  @@index([localId])
+  @@index([size, color])
+}
+
+model InventoryReservation {
+  id             String            @id
+  localSkuId     Int
+  quantity       Int
+  status         ReservationStatus @default(ACTIVE)
+  expiresAt      DateTime
+  allocatedAt    DateTime?
+  cancelledAt    DateTime?
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+  stripeSessionId String?
+
+  localSku LocalSku @relation(fields: [localSkuId], references: [id], onDelete: Cascade)
+  order    Order?
+
+  @@index([localSkuId, status])
+  @@index([expiresAt])
+}
+
+model Order {
+  id            String      @id
+  reservationId String      @unique
+  status        OrderStatus @default(DRAFT)
+  customerEmail String?
+  totalCents    Int
+  currency      String      @default("USD")
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  reservation InventoryReservation @relation(fields: [reservationId], references: [id])
+  items       OrderItem[]
+  payments    Payment[]
+  fulfillment FulfillmentOrder?
+}
+
+model OrderItem {
+  id         Int    @id @default(autoincrement())
+  orderId    String
+  localId    Int
+  localSkuId Int
+  quantity   Int
+  unitCents  Int
+
+  order    Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  local    Local    @relation(fields: [localId], references: [id])
+  localSku LocalSku @relation(fields: [localSkuId], references: [id])
+}
+
+model Payment {
+  id                    String        @id
+  orderId               String
+  status                PaymentStatus @default(PENDING)
+  stripeCheckoutSession String?       @unique
+  stripePaymentIntent   String?       @unique
+  amountCents           Int
+  currency              String        @default("USD")
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+}
+
+model FulfillmentOrder {
+  id              String            @id
+  orderId         String            @unique
+  status          FulfillmentStatus @default(NOT_SUBMITTED)
+  printifyOrderId String?           @unique
+  submittedAt     DateTime?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+}
+
+model Approval {
+  id           String           @id
+  localId      Int?
+  approver     String
+  decision     ApprovalDecision
+  scope        String
+  specVersion  String
+  approvedAt   DateTime
+  expiresAt    DateTime?
+  notes        String?
+
+  local Local? @relation(fields: [localId], references: [id])
+}
+
+model ActionLog {
+  id             String      @id
+  localId        Int?
+  timestamp      DateTime
+  agentName      String
+  actionClass    String
+  requestId      String
+  platform       String
+  affectedObject String?
+  approvalId     String?
+  publicUrl      String?
+  state          ActionState
+  summary        String
+
+  local Local? @relation(fields: [localId], references: [id])
+}
+
+model Asset {
+  id           String   @id
+  localId      Int
+  kind         String
+  path         String
+  checksum     String?
+  sourceNotes  String?
+  approved     Boolean  @default(false)
+  createdAt    DateTime @default(now())
+
+  local Local @relation(fields: [localId], references: [id], onDelete: Cascade)
+}
+
+model AgentDraft {
+  id          String   @id
+  kind        String
+  localNumber String?
+  content     String
+  createdAt   DateTime @default(now())
+  reviewedAt  DateTime?
+  decision    String?
+}
+
+model DashboardSnapshot {
+  id                  String   @id
+  currentLocal        String
+  localStatus         String
+  lastSanitizedAction String
+  uptime              String
+  fulfilledThisMonth  Int
+  createdAt           DateTime @default(now())
+}
+
+model WebhookEvent {
+  id          String   @id
+  platform    String
+  eventType   String
+  receivedAt  DateTime @default(now())
+  processedAt DateTime?
+  payloadHash String
+}

@@ -5,7 +5,7 @@
 - Local number: `001`
 - Concept sentence: `Local No. 001: founding artifact.`
 - Lifecycle state: `concept_draft`
-- Launch timestamp: pending human decision
+- Launch timestamp: N/A
 
 ## Product
 
@@ -29,14 +29,15 @@
 
 ## Commerce
 
-- Retail price: pending human decision
+- Retail price: $50 USD
 - Cost estimate: pending Printify quote
 - Gross margin: pending human decision
-- Shipping profile: pending human approval
+- Shipping profile: International intent recorded; country list pending Printify/Stripe/tax validation
 - Tax settings: pending human approval
 - Stripe product ID: pending
 - Stripe price ID: pending
 - Printify product ID: pending
+- Public support email: autonomousorganization@protonmail.com
 
 ## Assets
 
