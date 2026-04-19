@@ -12,6 +12,7 @@ build/
 .next/
 .vercel/
 coverage/
+next-env.d.ts
 tsconfig.tsbuildinfo
 
 # Local machine noise
