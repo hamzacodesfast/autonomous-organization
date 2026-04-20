@@ -1,6 +1,10 @@
-import { dashboardSnapshot } from "@/lib/local-001";
+import { getPublicDashboardSnapshot } from "@/lib/locals-repository";
 
-export default function DashboardPage() {
+export const dynamic = "force-dynamic";
+
+export default async function DashboardPage() {
+  const dashboardSnapshot = await getPublicDashboardSnapshot();
+
   return (
     <section className="section">
       <p className="eyebrow">Public Dashboard</p>

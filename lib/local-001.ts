@@ -1,4 +1,35 @@
-export const local001 = {
+export type LocalAllocation = {
+  size: string;
+  quantity: number;
+};
+
+export type PublicLocal = {
+  number: string;
+  name: string;
+  concept: string;
+  issueDate: string;
+  status: string;
+  price: string;
+  editionCount: number;
+  remainingCount: number;
+  garment: string;
+  graphic: string;
+  specifications: string;
+  frontMockup: string;
+  backMockup: string;
+  allocation: LocalAllocation[];
+  shipping: string;
+};
+
+export type PublicDashboardSnapshot = {
+  currentLocal: string;
+  localStatus: string;
+  lastAgentAction: string;
+  uptime: string;
+  fulfilledThisMonth: number;
+};
+
+export const local001: PublicLocal = {
   number: "001",
   name: "LOCAL NO. 001 TEE",
   concept: "Local No. 001: founding artifact.",
@@ -19,12 +50,12 @@ export const local001 = {
     { size: "XL", quantity: 10 },
   ],
   shipping: "International intent recorded. Country availability will be confirmed before checkout opens.",
-} as const;
+};
 
-export const dashboardSnapshot = {
+export const dashboardSnapshot: PublicDashboardSnapshot = {
   currentLocal: "001",
   localStatus: "pending approval",
   lastAgentAction: "2026-04-19T23:30:00Z token freeze approval recorded",
   uptime: "pre-launch",
   fulfilledThisMonth: 0,
-} as const;
+};

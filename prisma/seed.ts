@@ -1,4 +1,4 @@
-import { PrismaClient, LocalState } from "@prisma/client";
+import { ActionState, ApprovalDecision, LocalState, PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -73,8 +73,70 @@ async function main() {
     });
   }
 
-  await prisma.dashboardSnapshot.create({
-    data: {
+  await prisma.approval.upsert({
+    where: { id: "AO-APPROVAL-0001" },
+    update: {
+      localId: local.id,
+      approver: "hamzacodesfast",
+      decision: ApprovalDecision.APPROVED,
+      scope: "Token work frozen until after commerce launch.",
+      specVersion: "v0.2",
+      approvedAt: new Date("2026-04-19T23:30:00.000Z"),
+      notes:
+        "No token ownership, profit, governance, dividend, revenue-share, entitlement, price, or market language may be published.",
+    },
+    create: {
+      id: "AO-APPROVAL-0001",
+      localId: local.id,
+      approver: "hamzacodesfast",
+      decision: ApprovalDecision.APPROVED,
+      scope: "Token work frozen until after commerce launch.",
+      specVersion: "v0.2",
+      approvedAt: new Date("2026-04-19T23:30:00.000Z"),
+      notes:
+        "No token ownership, profit, governance, dividend, revenue-share, entitlement, price, or market language may be published.",
+    },
+  });
+
+  await prisma.actionLog.upsert({
+    where: { id: "action-token-freeze-001" },
+    update: {
+      localId: local.id,
+      timestamp: new Date("2026-04-19T23:30:00.000Z"),
+      agentName: "human-operator",
+      actionClass: "Class 3",
+      requestId: "AO-APPROVAL-0001",
+      platform: "Discord",
+      affectedObject: "token-public-language",
+      approvalId: "AO-APPROVAL-0001",
+      state: ActionState.SUCCESS,
+      summary: "Token work frozen until after commerce launch.",
+    },
+    create: {
+      id: "action-token-freeze-001",
+      localId: local.id,
+      timestamp: new Date("2026-04-19T23:30:00.000Z"),
+      agentName: "human-operator",
+      actionClass: "Class 3",
+      requestId: "AO-APPROVAL-0001",
+      platform: "Discord",
+      affectedObject: "token-public-language",
+      approvalId: "AO-APPROVAL-0001",
+      state: ActionState.SUCCESS,
+      summary: "Token work frozen until after commerce launch.",
+    },
+  });
+
+  await prisma.dashboardSnapshot.upsert({
+    where: { id: "dashboard-prelaunch-001" },
+    update: {
+      currentLocal: "001",
+      localStatus: "pending approval",
+      lastSanitizedAction: "2026-04-19T23:30:00Z token freeze approval recorded",
+      uptime: "pre-launch",
+      fulfilledThisMonth: 0,
+    },
+    create: {
       id: "dashboard-prelaunch-001",
       currentLocal: "001",
       localStatus: "pending approval",

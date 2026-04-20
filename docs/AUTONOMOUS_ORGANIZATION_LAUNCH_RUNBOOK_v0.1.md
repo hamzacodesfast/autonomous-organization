@@ -260,6 +260,20 @@ Acceptance:
 
 Add Postgres and schema migrations.
 
+Docker is required for the local Postgres workflow.
+
+Local commands:
+
+```bash
+npm run db:check
+npm run db:up
+npm run prisma:validate
+npm run db:migrate
+npm run seed
+```
+
+The public site must keep `ENABLE_DATABASE_READS=false` until migration and seed have completed. Enable database reads only after the seeded Local No. 001 record has been verified.
+
 Seed Local No. 001:
 
 - Local number: `001`

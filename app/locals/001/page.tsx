@@ -1,7 +1,11 @@
 import { ProductMockup } from "@/app/components/product-mockup";
-import { local001 } from "@/lib/local-001";
+import { getCurrentLocal } from "@/lib/locals-repository";
 
-export default function Local001Page() {
+export const dynamic = "force-dynamic";
+
+export default async function Local001Page() {
+  const local001 = await getCurrentLocal();
+
   return (
     <>
       <section className="section product-grid">

@@ -1,8 +1,12 @@
 import Link from "next/link";
 import { ProductMockup } from "@/app/components/product-mockup";
-import { dashboardSnapshot, local001 } from "@/lib/local-001";
+import { getCurrentLocal, getPublicDashboardSnapshot } from "@/lib/locals-repository";
 
-export default function HomePage() {
+export const dynamic = "force-dynamic";
+
+export default async function HomePage() {
+  const [local001, dashboardSnapshot] = await Promise.all([getCurrentLocal(), getPublicDashboardSnapshot()]);
+
   return (
     <>
       <section className="section product-grid">

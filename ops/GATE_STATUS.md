@@ -40,17 +40,27 @@ Status: in progress
 
 Next build target:
 
-- database migration against local Postgres
+- rotate Discord webhooks that previously appeared in `.env.example`
+- database migration against local Postgres after Docker is installed
 - Stripe test-mode checkout
 - Printify draft fulfillment mapping
 - policy text human approval
 
 Completed:
 
+- local Postgres Docker Compose file added
+- local database prerequisite check added
+- initial Prisma migration generated
 - static website pages scaffolded
 - Local No. 001 public page scaffolded
 - public dashboard shell scaffolded
 - policy/contact pages scaffolded
 - database schema drafted
 - Local No. 001 seed drafted
+- database-backed Local/dashboard read layer added with static fallback
 - inventory reservation module and tests added
+
+Blocked locally:
+
+- Docker is not installed on this workstation, so `npm run db:up`, `npm run db:migrate`, and `npm run seed` have not been executed against a live Postgres instance.
+- Passwordless `sudo` is not available, so Codex cannot install Docker on this workstation.
