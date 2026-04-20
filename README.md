@@ -43,6 +43,7 @@ Run checks:
 ```bash
 npm run lint
 npm run typecheck
+npm run build
 npm run test:inventory
 npm run test:checkout
 npm run test:printify
@@ -125,4 +126,20 @@ Launch mode is only for the approved public launch window:
 
 ```bash
 npm run launch:preflight -- --mode=launch
+```
+
+## Hetzner Production Stack
+
+The VPS deployment uses:
+
+- `Dockerfile`
+- `docker-compose.production.yml`
+- `deploy/production.env.example`
+- `deploy/Caddyfile.example`
+
+Production compose commands run from `/srv/autonomous-organization/app`:
+
+```bash
+docker compose --env-file .env.production -f docker-compose.production.yml build
+docker compose --env-file .env.production -f docker-compose.production.yml up -d
 ```

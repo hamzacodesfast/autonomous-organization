@@ -132,7 +132,7 @@ Status: launch window approved; production preflight pending
 
 Next build target:
 
-- install production app stack on Hetzner
+- clone app repo onto Hetzner and create production env file
 - run production launch preflight in deployed environment
 - open public checkout only after production preflight passes
 
@@ -148,6 +148,8 @@ Completed:
 - `ao_deploy` sudo user created
 - server SSH hardening applied
 - server firewall enabled for SSH, HTTP, and HTTPS
+- Docker, Docker Compose, and Caddy installed on Hetzner
+- deploy user verified for Docker access
 
 Blocked locally:
 

@@ -179,6 +179,35 @@ Recommended first production stack on the VPS:
 - Next.js app as a Docker service
 - systemd only for Docker/Caddy service supervision
 
+Repo deployment files:
+
+- `Dockerfile`
+- `docker-compose.production.yml`
+- `deploy/production.env.example`
+- `deploy/Caddyfile.example`
+- `app/api/health/route.ts`
+
+Server paths:
+
+```text
+/srv/autonomous-organization/app
+/srv/autonomous-organization/app/.env.production
+/etc/caddy/Caddyfile
+```
+
+Production compose commands must include the production env file:
+
+```bash
+docker compose --env-file .env.production -f docker-compose.production.yml build
+docker compose --env-file .env.production -f docker-compose.production.yml up -d
+```
+
+Caddy should reverse proxy the public HTTPS domain to:
+
+```text
+127.0.0.1:3000
+```
+
 Do not open checkout until:
 
 ```bash
@@ -186,6 +215,31 @@ npm run launch:preflight -- --mode=launch
 ```
 
 passes on the VPS or against the production environment.
+
+## Server Stack Install
+
+Install the stack on the VPS:
+
+```bash
+sudo apt update
+sudo apt install -y docker.io docker-compose-v2 caddy
+sudo systemctl enable --now docker
+sudo systemctl enable --now caddy
+sudo usermod -aG docker ao_deploy
+```
+
+Open a fresh SSH session after adding `ao_deploy` to the `docker` group.
+
+Verify:
+
+```bash
+docker --version
+docker compose version
+caddy version
+docker ps
+systemctl is-active docker
+systemctl is-active caddy
+```
 
 ## Immediate Next Checklist
 

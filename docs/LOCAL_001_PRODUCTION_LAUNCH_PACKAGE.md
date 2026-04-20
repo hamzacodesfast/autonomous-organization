@@ -126,6 +126,19 @@ npm run test:printify
 npm run launch:preflight -- --mode=launch
 ```
 
+On the Hetzner VPS, run production Docker commands from:
+
+```bash
+/srv/autonomous-organization/app
+```
+
+Use:
+
+```bash
+docker compose --env-file .env.production -f docker-compose.production.yml build
+docker compose --env-file .env.production -f docker-compose.production.yml up -d
+```
+
 The launch preflight blocks on:
 
 - checkout disabled when launch mode expects it open
