@@ -93,12 +93,11 @@ Status: in progress
 
 Next build target:
 
-- place or request a Printify sample/proof order for Local No. 001
-- record human approval of physical sample or production proof
 - confirm shipping profile and tax settings before live checkout rehearsal
 
 Completed:
 
+- Local No. 001 physical sample / production proof human-approved: `AO-APPROVAL-0003`
 - Local No. 001 production file generated and checksum recorded
 - Printify draft product mockup generated and recorded
 - Printify variant mapping recorded for fulfillment integration

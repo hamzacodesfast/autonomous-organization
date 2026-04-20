@@ -15,7 +15,7 @@ async function main() {
     where: { localNumber: "001" },
     update: {
       conceptSentence: "Local No. 001: founding artifact.",
-      state: LocalState.CONCEPT_DRAFT,
+      state: LocalState.HUMAN_APPROVAL,
       approvedBlank: "Gildan 5000 short-sleeve tee",
       garmentColorways: ["Black"],
       editionCount: 100,
@@ -36,7 +36,7 @@ async function main() {
     create: {
       localNumber: "001",
       conceptSentence: "Local No. 001: founding artifact.",
-      state: LocalState.CONCEPT_DRAFT,
+      state: LocalState.HUMAN_APPROVAL,
       approvedBlank: "Gildan 5000 short-sleeve tee",
       garmentColorways: ["Black"],
       editionCount: 100,

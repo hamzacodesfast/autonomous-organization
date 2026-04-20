@@ -4,7 +4,7 @@
 
 - Local number: `001`
 - Concept sentence: `Local No. 001: founding artifact.`
-- Lifecycle state: `concept_draft`
+- Lifecycle state: `human_approval`
 - Launch timestamp: N/A
 
 ## Product
@@ -81,8 +81,8 @@ Edition: 100 units. No restocks.
 ## Review
 
 - Compliance review ID: pending
-- Approval ID: pending
-- Approved by: pending
-- Approval timestamp: pending
-- Proof/sample approved: no
+- Approval ID: `AO-APPROVAL-0003`
+- Approved by: `hamzacodesfast`
+- Approval timestamp: 2026-04-20T09:58:56Z
+- Proof/sample approved: yes
 - Archive URL: pending

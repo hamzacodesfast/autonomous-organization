@@ -46,3 +46,30 @@ Operational effect:
 - Gate 1 policy text is human-approved.
 - Public policy/contact pages may remain in the launch candidate.
 - Live checkout still requires later production proof, shipping/tax validation, and live checkout rehearsal approvals.
+
+## AO-APPROVAL-0003
+
+- Date: 2026-04-20
+- UTC timestamp: 2026-04-20T09:58:56Z
+- Channel: Codex operator chat
+- Approver: `hamzacodesfast`
+- Scope: Local No. 001 physical sample / production proof
+- Local number: `001`
+- Asset/object IDs:
+  - Printify product ID: `69e5bbbbc109d487ac09e911`
+  - Production file checksum: `sha256:7f0327d5781fa57838748c0ad8b351f529b97a9388811391fdd86cadeaa7bb8c`
+  - Printify back mockup checksum: `sha256:67a97cbe124b6a5f2fdda9b8c5e5f55271f61f3de72a2b566a01899ebc7cc35a`
+- Decision: approved
+
+Material reviewed:
+
+- Physical sample or production proof for Local No. 001
+- Back-only print placement
+- Black Gildan 5000 blank
+- Printify draft product and mockup record
+
+Operational effect:
+
+- Local No. 001 physical sample / production proof is human-approved.
+- The production file, Printify draft, and mockup may proceed to shipping/tax validation.
+- Live checkout still requires shipping/tax confirmation and live checkout rehearsal approval.
