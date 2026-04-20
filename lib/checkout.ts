@@ -96,6 +96,10 @@ function automaticTaxEnabled() {
   return process.env.STRIPE_AUTOMATIC_TAX_ENABLED === "true";
 }
 
+function termsConsentRequired() {
+  return process.env.STRIPE_REQUIRE_TERMS_CONSENT === "true";
+}
+
 function allowedShippingCountries(): ShippingAllowedCountry[] {
   const raw = process.env.STRIPE_ALLOWED_SHIPPING_COUNTRIES || "US,CA";
   const countries = raw
@@ -122,6 +126,16 @@ function normalizeSize(size: string) {
 
 function hashPayload(payload: string) {
   return createHash("sha256").update(payload).digest("hex");
+}
+
+function sleep(ms: number) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
+function isRetryableTransactionError(error: unknown) {
+  return error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2034";
 }
 
 async function lockSku(tx: TransactionClient, sku: string) {
@@ -265,7 +279,7 @@ function checkoutSessionParams(input: {
     cancel_url: `${baseUrl}/locals/001?checkout=cancelled`,
     expires_at: Math.floor(input.expiresAt.getTime() / 1000),
     automatic_tax: { enabled: automaticTaxEnabled() },
-    consent_collection: { terms_of_service: "required" },
+    ...(termsConsentRequired() ? { consent_collection: { terms_of_service: "required" as const } } : {}),
     custom_text: {
       shipping_address: {
         message: "Test-mode checkout. Production shipping countries and rates require final approval.",
@@ -509,55 +523,67 @@ export async function processStripeWebhook(rawBody: string, signature: string | 
   const event = stripe.webhooks.constructEvent(rawBody, signature, getStripeWebhookSecret());
   const payloadHash = hashPayload(rawBody);
 
-  return prisma.$transaction(
-    async (tx) => {
-      const existingEvent = await tx.webhookEvent.findUnique({
-        where: { id: event.id },
-      });
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    try {
+      return await prisma.$transaction(
+        async (tx) => {
+          const existingEvent = await tx.webhookEvent.findUnique({
+            where: { id: event.id },
+          });
 
-      if (existingEvent) {
-        return { received: true, duplicate: true, eventType: event.type, action: "duplicate" };
-      }
+          if (existingEvent) {
+            return { received: true, duplicate: true, eventType: event.type, action: "duplicate" };
+          }
 
-      await tx.webhookEvent.create({
-        data: {
-          id: event.id,
-          platform: "stripe",
-          eventType: event.type,
-          payloadHash,
+          await tx.webhookEvent.create({
+            data: {
+              id: event.id,
+              platform: "stripe",
+              eventType: event.type,
+              payloadHash,
+            },
+          });
+
+          if (!isCheckoutSession(event.data.object)) {
+            return { received: true, duplicate: false, eventType: event.type, action: "ignored" };
+          }
+
+          if (event.type === "checkout.session.completed") {
+            if (event.data.object.payment_status === "paid") {
+              const action = await markCheckoutSessionPaid(tx, event.data.object);
+              return { received: true, duplicate: false, eventType: event.type, action };
+            }
+
+            return { received: true, duplicate: false, eventType: event.type, action: "awaiting_payment" };
+          }
+
+          if (event.type === "checkout.session.async_payment_succeeded") {
+            const action = await markCheckoutSessionPaid(tx, event.data.object);
+            return { received: true, duplicate: false, eventType: event.type, action };
+          }
+
+          if (event.type === "checkout.session.async_payment_failed") {
+            const action = await markCheckoutSessionFailed(tx, event.data.object, ReservationStatus.CANCELLED);
+            return { received: true, duplicate: false, eventType: event.type, action };
+          }
+
+          if (event.type === "checkout.session.expired") {
+            const action = await markCheckoutSessionFailed(tx, event.data.object, ReservationStatus.EXPIRED);
+            return { received: true, duplicate: false, eventType: event.type, action };
+          }
+
+          return { received: true, duplicate: false, eventType: event.type, action: "ignored" };
         },
-      });
-
-      if (!isCheckoutSession(event.data.object)) {
-        return { received: true, duplicate: false, eventType: event.type, action: "ignored" };
+        { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },
+      );
+    } catch (error) {
+      if (!isRetryableTransactionError(error) || attempt === 2) {
+        throw error;
       }
 
-      if (event.type === "checkout.session.completed") {
-        if (event.data.object.payment_status === "paid") {
-          const action = await markCheckoutSessionPaid(tx, event.data.object);
-          return { received: true, duplicate: false, eventType: event.type, action };
-        }
+      await sleep(50 * (attempt + 1));
+    }
+  }
 
-        return { received: true, duplicate: false, eventType: event.type, action: "awaiting_payment" };
-      }
-
-      if (event.type === "checkout.session.async_payment_succeeded") {
-        const action = await markCheckoutSessionPaid(tx, event.data.object);
-        return { received: true, duplicate: false, eventType: event.type, action };
-      }
-
-      if (event.type === "checkout.session.async_payment_failed") {
-        const action = await markCheckoutSessionFailed(tx, event.data.object, ReservationStatus.CANCELLED);
-        return { received: true, duplicate: false, eventType: event.type, action };
-      }
-
-      if (event.type === "checkout.session.expired") {
-        const action = await markCheckoutSessionFailed(tx, event.data.object, ReservationStatus.EXPIRED);
-        return { received: true, duplicate: false, eventType: event.type, action };
-      }
-
-      return { received: true, duplicate: false, eventType: event.type, action: "ignored" };
-    },
-    { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },
-  );
+  throw new Error("Stripe webhook transaction retry failed.");
 }

@@ -331,9 +331,11 @@ Required local Stripe values:
 STRIPE_TEST_MODE_ONLY=true
 STRIPE_SECRET_KEY=sk_test_...
 STRIPE_WEBHOOK_SECRET=whsec_...
+STRIPE_REQUIRE_TERMS_CONSENT=false
 ```
 
 Do not set `STRIPE_TEST_MODE_ONLY=false` or use live keys before the live checkout rehearsal gate.
+Set `STRIPE_REQUIRE_TERMS_CONSENT=true` only after the Stripe Dashboard public business details include the approved Terms of Service URL.
 
 Flow:
 

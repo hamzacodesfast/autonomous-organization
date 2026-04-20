@@ -48,6 +48,12 @@ Next build target:
 
 Completed:
 
+- Stripe CLI installed and authenticated on workstation
+- Stripe CLI webhook forwarding verified against local endpoint
+- Stripe test event burst verified with all webhook responses returning 200
+- Checkout Session creation verified through app route
+- Checkout Session expiration webhook verified against local Postgres cleanup path
+- retry handling added for concurrent Stripe webhook transaction conflicts
 - Stripe Node SDK added
 - Stripe test-mode Checkout Session route added
 - Stripe signed webhook route added
@@ -72,4 +78,4 @@ Completed:
 
 Blocked locally:
 
-- Stripe CLI is not installed, so hosted Checkout webhook forwarding has not been run from this workstation.
+- none

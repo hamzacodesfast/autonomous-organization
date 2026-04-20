@@ -78,6 +78,7 @@ STRIPE_CHECKOUT_ENABLED=true
 STRIPE_TEST_MODE_ONLY=true
 STRIPE_SECRET_KEY=sk_test_...
 STRIPE_WEBHOOK_SECRET=whsec_...
+STRIPE_REQUIRE_TERMS_CONSENT=false
 ```
 
 Forward Stripe test webhooks to the app:
@@ -93,3 +94,5 @@ ENABLE_DATABASE_READS=true STRIPE_CHECKOUT_ENABLED=true npm run dev
 ```
 
 Use Stripe-hosted Checkout from `/locals/001`. The browser success page does not allocate inventory; only signed Stripe webhooks can mark orders paid.
+
+Set `STRIPE_REQUIRE_TERMS_CONSENT=true` only after the Stripe Dashboard public business details include the approved Terms of Service URL.
