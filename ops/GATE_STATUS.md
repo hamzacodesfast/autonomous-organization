@@ -132,7 +132,6 @@ Status: production stack installed; public ingress and production preflight pend
 
 Next build target:
 
-- allow public HTTP/HTTPS in the Hetzner cloud firewall
 - point the production domain to `62.238.9.164`
 - switch Caddy from IP smoke mode to the production HTTPS domain
 - configure the live Stripe webhook endpoint for the production URL
@@ -162,10 +161,13 @@ Completed:
 - app container started and healthy on `127.0.0.1:3000`
 - Caddy configured in HTTP IP-smoke mode to reverse proxy `127.0.0.1:3000`
 - VPS-local health check passed at `http://127.0.0.1/api/health`
+- public Hetzner firewall opened for HTTP/HTTPS by human operator
+- public health check passed at `http://62.238.9.164/api/health`
+- public Local No. 001 page verified in locked mode with checkout disabled
 
 Blocked locally:
 
-- public HTTP check to `62.238.9.164` timed out from workstation even though Caddy and UFW are correct on-server; Hetzner cloud firewall ingress for `80/tcp` and `443/tcp` needs confirmation
-- production HTTPS/domain is not configured yet
+- `autonomousorganization.io` still resolves to Namecheap parking instead of `62.238.9.164`
+- production HTTPS/domain is not configured yet; Caddy remains in HTTP IP-smoke mode
 - live Stripe webhook endpoint is not configured for the production URL yet
 - production launch preflight has not been run in the deployed environment

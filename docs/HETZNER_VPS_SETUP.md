@@ -265,7 +265,8 @@ As of 2026-04-20, the production VPS is:
 - App health: healthy on `127.0.0.1:3000`
 - Postgres health: healthy in Docker
 - Local No. 001 production seed: `100` units, `20` each for `S`, `M`, `L`, `XL`, and `XXL`
-- Public ingress: blocked until the Hetzner cloud firewall allows inbound `80/tcp` and `443/tcp`
+- Public ingress: `http://62.238.9.164/api/health` is reachable
+- DNS: `autonomousorganization.io` still points to Namecheap parking until its A records are changed
 
 ## Immediate Next Checklist
 
@@ -279,6 +280,18 @@ As of 2026-04-20, the production VPS is:
 8. Create `ao_deploy`.
 9. Test `ao_deploy`.
 10. Harden SSH and firewall.
+
+## DNS Cutover
+
+In Namecheap Advanced DNS for `autonomousorganization.io`, remove parking records that conflict with the public site and set:
+
+```text
+Type  Host  Value         TTL
+A     @     62.238.9.164  Automatic
+A     www   62.238.9.164  Automatic
+```
+
+Do not add an `AAAA` record unless the production IPv6 address is explicitly configured and tested. After DNS resolves to the VPS, replace the temporary IP-smoke Caddyfile with the production domain Caddyfile and let Caddy issue HTTPS certificates.
 
 ## References
 
