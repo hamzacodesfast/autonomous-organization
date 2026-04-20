@@ -36,14 +36,15 @@ Operator launch inputs:
 
 ## Gate 1 — Static Site And Commerce Scaffold
 
-Status: in progress
+Status: complete
 
 Next build target:
 
-- policy text human approval
+- none
 
 Completed:
 
+- policy text human-approved: `AO-APPROVAL-0002`
 - Printify draft product created and mapped for Local No. 001
 - Printify enabled variant IDs recorded for black `S`, `M`, `L`, `XL`, and `2XL`
 - Printify back mockup recorded for Local No. 001
@@ -81,6 +82,26 @@ Completed:
 - Local No. 001 seed drafted
 - database-backed Local/dashboard read layer added with static fallback
 - inventory reservation module and tests added
+
+Blocked locally:
+
+- none
+
+## Gate 2 — Production Files And Proof
+
+Status: in progress
+
+Next build target:
+
+- place or request a Printify sample/proof order for Local No. 001
+- record human approval of physical sample or production proof
+- confirm shipping profile and tax settings before live checkout rehearsal
+
+Completed:
+
+- Local No. 001 production file generated and checksum recorded
+- Printify draft product mockup generated and recorded
+- Printify variant mapping recorded for fulfillment integration
 
 Blocked locally:
 

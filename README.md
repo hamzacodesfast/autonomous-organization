@@ -26,7 +26,7 @@ Never commit:
 
 ## Current Gate
 
-Gate 0 is in progress/completed by the human operator. Gate 1 begins with the static website, database schema, and inventory reservation system.
+Gate 1 is complete. Gate 2 is in progress: Local No. 001 needs a human-approved physical sample or production proof before live checkout rehearsal.
 
 ## Local Development
 
