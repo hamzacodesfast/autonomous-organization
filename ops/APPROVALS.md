@@ -115,5 +115,29 @@ approved: prepare production launch package
 Operational effect:
 
 - Codex may prepare launch checklists, preflight tooling, and production-readiness documentation.
-- Checkout and Printify fulfillment remain disabled until a final public launch window approval.
+- Checkout and Printify fulfillment remained disabled pending the later final public launch window approval.
 - Token work remains frozen.
+
+## AO-APPROVAL-0007
+
+- Date: 2026-04-20
+- UTC timestamp: 2026-04-20T19:36:14Z
+- Channel: Codex operator chat
+- Approver: `hamzacodesfast`
+- Scope: public launch window for Local No. 001
+- Local number: `001`
+- Decision: approved
+
+Approved instruction:
+
+```text
+approved: AO-APPROVAL-0007 public launch window
+```
+
+Operational effect:
+
+- The operator has approved opening the Local No. 001 public launch window.
+- Live Stripe keys, production webhook secret, and Printify draft order submission may be used during the launch window.
+- Printify `send_to_production` remains manual.
+- Token work remains frozen.
+- Production launch still requires production environment preflight and deployment-state confirmation before public promotion.

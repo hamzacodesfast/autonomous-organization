@@ -113,7 +113,7 @@ Status: complete per operator report
 
 Next build target:
 
-- production launch package and final public launch approval
+- none
 
 Completed:
 
@@ -124,24 +124,26 @@ Completed:
 
 Blocked locally:
 
-- production launch remains blocked until operator approves public launch window and production deployment settings
+- none
 
 ## Gate 4 — Production Launch Package
 
-Status: in progress
+Status: launch window approved; production preflight pending
 
 Next build target:
 
 - run locked launch preflight
-- receive `AO-APPROVAL-0007` public launch window approval
 - run production launch preflight in deployed environment
+- open public checkout only after production preflight passes
 
 Completed:
 
 - production launch package preparation approved: `AO-APPROVAL-0006`
 - production launch package document drafted
 - launch preflight script added
+- locked launch preflight passed with local paid-order reconciliation warning
+- public launch window approved: `AO-APPROVAL-0007`
 
 Blocked locally:
 
-- final public launch window is not approved
+- production launch preflight has not been run in the deployed environment

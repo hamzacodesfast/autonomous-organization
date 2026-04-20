@@ -6,7 +6,7 @@ Local: `001`
 
 ## Authority
 
-This package prepares the public launch switch. It does not approve public launch by itself.
+This package records the approved public launch window and the remaining production controls.
 
 Current approvals on record:
 
@@ -15,10 +15,7 @@ Current approvals on record:
 - `AO-APPROVAL-0003` — Local No. 001 physical sample / production proof approved
 - `AO-APPROVAL-0004` — shipping included and tax behavior accepted by operator
 - `AO-APPROVAL-0006` — prepare production launch package
-
-Required before public launch:
-
-- `AO-APPROVAL-0007` — final public launch window approval
+- `AO-APPROVAL-0007` — final public launch window approved
 
 ## Current Position
 
@@ -39,7 +36,6 @@ TOKEN_WORK_FROZEN=true
 
 Public launch remains blocked until all are true:
 
-- final launch approval is posted as `AO-APPROVAL-0007`
 - production deployment target is selected and reachable over HTTPS
 - live Stripe webhook endpoint is configured for the production URL
 - production `STRIPE_WEBHOOK_SECRET` matches the production endpoint
@@ -147,20 +143,19 @@ Warnings must be read aloud by the operator before continuing.
 
 ## Public Launch Steps
 
-1. Post `AO-APPROVAL-0007`.
-2. Confirm `.env` or production secret store is in launch-window state.
-3. Apply migrations to production.
-4. Apply the production database switch.
-5. Run launch preflight in production environment.
-6. Deploy the current `main`.
-7. Open `/locals/001`.
-8. Confirm button text says `Checkout`, not `Test Checkout`.
-9. Place exactly one operator smoke purchase only if the launch window requires it.
-10. Monitor Stripe webhooks for `checkout.session.completed`.
-11. Monitor Postgres for paid allocation and no oversell.
-12. Monitor Printify for draft order creation.
-13. Keep `send_to_production` manual unless a later approval wires automatic production submission.
-14. Publish public/social launch copy only after checkout and fulfillment records look correct.
+1. Confirm `.env` or production secret store is in launch-window state.
+2. Apply migrations to production.
+3. Apply the production database switch.
+4. Run launch preflight in production environment.
+5. Deploy the current `main`.
+6. Open `/locals/001`.
+7. Confirm button text says `Checkout`, not `Test Checkout`.
+8. Place exactly one operator smoke purchase only if the launch window requires it.
+9. Monitor Stripe webhooks for `checkout.session.completed`.
+10. Monitor Postgres for paid allocation and no oversell.
+11. Monitor Printify for draft order creation.
+12. Keep `send_to_production` manual unless a later approval wires automatic production submission.
+13. Publish public/social launch copy only after checkout and fulfillment records look correct.
 
 ## Rollback
 
@@ -192,7 +187,7 @@ Within 72 hours:
 - prepare postmortem from `docs/POSTMORTEM_TEMPLATE.md`
 - keep token work frozen until commerce launch is explicitly closed by a later approval
 
-## Final Launch Approval Template
+## Recorded Final Launch Approval
 
 ```text
 AO-APPROVAL-0007

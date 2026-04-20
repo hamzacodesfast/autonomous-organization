@@ -27,7 +27,7 @@ Never commit:
 
 ## Current Gate
 
-Gate 3 is complete per operator report. Gate 4 is in progress: production launch package and final public launch approval. Checkout and Printify fulfillment remain disabled until `AO-APPROVAL-0007`.
+Gate 4 is active. `AO-APPROVAL-0007` approved the public launch window; production launch still requires deployed-environment preflight before checkout is opened publicly.
 
 ## Local Development
 
