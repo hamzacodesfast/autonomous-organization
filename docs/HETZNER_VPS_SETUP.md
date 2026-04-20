@@ -259,14 +259,15 @@ As of 2026-04-20, the production VPS is:
 - IPv4: `62.238.9.164`
 - Deploy user: `ao_deploy`
 - App path: `/srv/autonomous-organization/app`
-- App commit: `87b6526`
+- App commit: `6ae7c3b`
 - Runtime: Docker Compose
-- Reverse proxy: Caddy, currently in HTTP IP-smoke mode
+- Reverse proxy: Caddy, serving `https://autonomousorganization.io` with `www` redirected to apex
 - App health: healthy on `127.0.0.1:3000`
 - Postgres health: healthy in Docker
 - Local No. 001 production seed: `100` units, `20` each for `S`, `M`, `L`, `XL`, and `XXL`
 - Public ingress: `http://62.238.9.164/api/health` is reachable
-- DNS: `autonomousorganization.io` still points to Namecheap parking until its A records are changed
+- Public domain: `https://autonomousorganization.io`
+- `www.autonomousorganization.io` redirects to apex over HTTPS
 
 ## Immediate Next Checklist
 
@@ -292,6 +293,13 @@ A     www   62.238.9.164  Automatic
 ```
 
 Do not add an `AAAA` record unless the production IPv6 address is explicitly configured and tested. After DNS resolves to the VPS, replace the temporary IP-smoke Caddyfile with the production domain Caddyfile and let Caddy issue HTTPS certificates.
+
+Current result:
+
+- authoritative Namecheap nameservers return `62.238.9.164` for apex and `www`
+- major public resolvers return `62.238.9.164` for apex and `www`
+- apex serves valid HTTPS from Caddy
+- `www` redirects permanently to apex
 
 ## References
 

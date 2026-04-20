@@ -132,10 +132,8 @@ Status: production stack installed; public ingress and production preflight pend
 
 Next build target:
 
-- point the production domain to `62.238.9.164`
-- switch Caddy from IP smoke mode to the production HTTPS domain
 - configure the live Stripe webhook endpoint for the production URL
-- run production launch preflight in deployed environment
+- run production launch preflight in launch mode
 - open public checkout only after production preflight passes
 
 Completed:
@@ -164,10 +162,15 @@ Completed:
 - public Hetzner firewall opened for HTTP/HTTPS by human operator
 - public health check passed at `http://62.238.9.164/api/health`
 - public Local No. 001 page verified in locked mode with checkout disabled
+- `autonomousorganization.io` and `www.autonomousorganization.io` now resolve to `62.238.9.164` on authoritative and major public resolvers
+- Caddy switched from HTTP IP-smoke mode to production HTTPS domain mode
+- `https://autonomousorganization.io` verified with valid TLS
+- `https://www.autonomousorganization.io` verified redirecting to apex
+- production app URLs updated to `https://autonomousorganization.io`
+- deployed locked preflight passed on Hetzner with live Stripe key kind and closed checkout/Printify fuses
+- disabled checkout redirect verified on production domain without localhost leakage
 
 Blocked locally:
 
-- `autonomousorganization.io` still resolves to Namecheap parking instead of `62.238.9.164`
-- production HTTPS/domain is not configured yet; Caddy remains in HTTP IP-smoke mode
 - live Stripe webhook endpoint is not configured for the production URL yet
-- production launch preflight has not been run in the deployed environment
+- production launch preflight has not been run in launch mode
