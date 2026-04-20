@@ -40,11 +40,13 @@ Status: in progress
 
 Next build target:
 
-- Printify draft fulfillment mapping
 - policy text human approval
 
 Completed:
 
+- Printify draft product created and mapped for Local No. 001
+- Printify enabled variant IDs recorded for black `S`, `M`, `L`, `XL`, and `2XL`
+- Printify back mockup recorded for Local No. 001
 - Discord webhooks that previously appeared in `.env.example` confirmed rotated by human operator
 - failed Stripe test card checkout verified with no inventory allocation
 - failed Checkout Session expiration cleanup verified against local Postgres
