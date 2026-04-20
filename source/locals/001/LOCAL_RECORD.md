@@ -35,6 +35,7 @@
 - Gross margin: human-accepted for shipping-included launch model; final margin varies by destination, size, carrier behavior, taxes, refunds, and fees
 - Shipping profile: shipping included in the listed retail price for countries available at checkout; fulfillment through Printify
 - Tax settings: human-confirmed for launch rehearsal without enabling separate Stripe automatic tax collection; operator retains responsibility for accounting and tax treatment
+- Fulfillment submission mode: local fulfillment draft created after paid allocation; Printify draft order submission guarded by `PRINTIFY_ENABLED=false` until live rehearsal approval
 - Stripe product ID: pending
 - Stripe price ID: pending
 - Printify product ID: `69e5bbbbc109d487ac09e911`

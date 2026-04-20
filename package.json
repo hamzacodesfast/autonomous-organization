@@ -17,6 +17,7 @@
     "seed": "node scripts/db-seed.mjs",
     "test:inventory": "tsx tests/inventory/reservations.test.ts",
     "test:checkout": "node scripts/db-test-checkout.mjs",
+    "test:printify": "node scripts/db-test-printify.mjs",
     "export:social": "node scripts/export-social-assets.mjs",
     "export:print": "node scripts/export-print-assets.mjs"
   },

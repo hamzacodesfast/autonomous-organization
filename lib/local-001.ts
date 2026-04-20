@@ -50,7 +50,7 @@ export const local001: PublicLocal = {
     { size: "XL", quantity: 20 },
     { size: "XXL", quantity: 20 },
   ],
-  shipping: "International intent recorded. Country availability will be confirmed before checkout opens.",
+  shipping: "Shipping included for countries available at checkout.",
 };
 
 export const dashboardSnapshot: PublicDashboardSnapshot = {

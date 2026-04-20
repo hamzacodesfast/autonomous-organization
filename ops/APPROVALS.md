@@ -95,4 +95,4 @@ Operational effect:
 
 - Gate 2 shipping profile and tax behavior confirmation is complete.
 - Local No. 001 may proceed to live checkout rehearsal preparation.
-- `PRINTIFY_ENABLED` remains false until controlled fulfillment submission is implemented and separately approved.
+- `PRINTIFY_ENABLED` remains false until live fulfillment is separately approved for the rehearsal purchase.

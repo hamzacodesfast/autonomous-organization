@@ -26,7 +26,7 @@ Never commit:
 
 ## Current Gate
 
-Gate 2 is complete. Gate 3 is in progress: live checkout rehearsal preparation, with fulfillment still disabled until explicit operator approval.
+Gate 2 is complete. Gate 3 is in progress: live checkout rehearsal preparation. Printify fulfillment is wired in controlled mode and remains disabled until explicit operator approval flips `PRINTIFY_ENABLED=true`.
 
 ## Local Development
 
@@ -43,6 +43,7 @@ npm run lint
 npm run typecheck
 npm run test:inventory
 npm run test:checkout
+npm run test:printify
 ```
 
 ## Local Postgres
@@ -96,3 +97,15 @@ ENABLE_DATABASE_READS=true STRIPE_CHECKOUT_ENABLED=true npm run dev
 Use Stripe-hosted Checkout from `/locals/001`. The browser success page does not allocate inventory; only signed Stripe webhooks can mark orders paid.
 
 Set `STRIPE_REQUIRE_TERMS_CONSENT=true` only after the Stripe Dashboard public business details include the approved Terms of Service URL.
+
+## Printify Fulfillment Guard
+
+Paid Stripe webhook allocation creates a local fulfillment draft row in Postgres.
+
+Printify API order creation is blocked unless this flag is explicitly enabled:
+
+```bash
+PRINTIFY_ENABLED=true
+```
+
+When enabled, the webhook creates a Printify draft order for the approved Local No. 001 product and variant mapping. It does not call Printify's `send_to_production` endpoint.

@@ -434,7 +434,7 @@ Before public launch:
 4. Run expired reservation.
 5. Run sold-out SKU.
 6. Run refund.
-7. Run Printify submission in controlled mode.
+7. Run Printify submission in controlled mode with `PRINTIFY_ENABLED=false`, then enable only for the approved rehearsal order.
 8. Run Discord alert test.
 9. Run dashboard sanitization test.
 10. Run secret scan.
@@ -539,7 +539,7 @@ Do this on launch day.
 2. Confirm inventory allocation.
 3. Confirm checkout live mode keys are loaded.
 4. Confirm Stripe webhook endpoint is live and verified.
-5. Confirm Printify fulfillment submission mode.
+5. Confirm Printify fulfillment submission mode and `PRINTIFY_ENABLED` value.
 6. Confirm Discord alerts.
 7. Confirm dashboard shows sanitized fields only.
 8. Confirm social announcement drafts.

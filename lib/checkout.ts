@@ -1,5 +1,6 @@
 import { createHash, randomUUID } from "node:crypto";
 import {
+  FulfillmentStatus,
   OrderStatus,
   PaymentStatus,
   Prisma,
@@ -11,6 +12,7 @@ import {
 import Stripe from "stripe";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
+import { submitPrintifyDraftForCheckoutSession, type PrintifyFulfillmentAction } from "@/lib/printify";
 import { getStripe, getStripeWebhookSecret, stripeCheckoutEnabled } from "@/lib/stripe";
 
 type TransactionClient = Omit<
@@ -24,6 +26,13 @@ type LockedSku = LocalSku & {
 
 type CheckoutSessionCreateParams = NonNullable<Parameters<Stripe["checkout"]["sessions"]["create"]>[0]>;
 type ShippingAllowedCountry = NonNullable<CheckoutSessionCreateParams["shipping_address_collection"]>["allowed_countries"][number];
+type StripeWebhookResult = {
+  received: true;
+  duplicate: boolean;
+  eventType: string;
+  action: string;
+  fulfillmentAction?: PrintifyFulfillmentAction;
+};
 
 const checkoutSizeSchema = z.enum(["S", "M", "L", "XL", "XXL"]);
 const local001SkuPrefix = "AO-001-BLACK";
@@ -282,7 +291,7 @@ function checkoutSessionParams(input: {
     ...(termsConsentRequired() ? { consent_collection: { terms_of_service: "required" as const } } : {}),
     custom_text: {
       shipping_address: {
-        message: "Test-mode checkout. Production shipping countries and rates require final approval.",
+        message: "Shipping is included in the listed price for countries available at checkout.",
       },
       submit: {
         message: "Payment confirms only after the server receives Stripe's signed webhook.",
@@ -313,7 +322,7 @@ function checkoutSessionParams(input: {
       {
         shipping_rate_data: {
           type: "fixed_amount",
-          display_name: "Test shipping",
+          display_name: "Shipping included",
           fixed_amount: {
             amount: 0,
             currency,
@@ -479,6 +488,16 @@ async function markCheckoutSessionPaid(tx: TransactionClient, session: Stripe.Ch
     },
   });
 
+  await tx.fulfillmentOrder.upsert({
+    where: { orderId: order.id },
+    update: {},
+    create: {
+      id: `ful_${randomUUID()}`,
+      orderId: order.id,
+      status: FulfillmentStatus.NOT_SUBMITTED,
+    },
+  });
+
   return "allocated";
 }
 
@@ -525,7 +544,7 @@ export async function processStripeWebhook(rawBody: string, signature: string | 
 
   for (let attempt = 0; attempt < 3; attempt += 1) {
     try {
-      return await prisma.$transaction(
+      const result: StripeWebhookResult = await prisma.$transaction(
         async (tx) => {
           const existingEvent = await tx.webhookEvent.findUnique({
             where: { id: event.id },
@@ -576,6 +595,18 @@ export async function processStripeWebhook(rawBody: string, signature: string | 
         },
         { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },
       );
+
+      if (
+        !result.duplicate &&
+        result.action === "allocated" &&
+        isCheckoutSession(event.data.object) &&
+        (event.type === "checkout.session.completed" || event.type === "checkout.session.async_payment_succeeded")
+      ) {
+        const fulfillment = await submitPrintifyDraftForCheckoutSession(event.data.object);
+        return { ...result, fulfillmentAction: fulfillment.action };
+      }
+
+      return result;
     } catch (error) {
       if (!isRetryableTransactionError(error) || attempt === 2) {
         throw error;

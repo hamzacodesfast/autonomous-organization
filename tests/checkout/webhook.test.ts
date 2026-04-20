@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import {
+  FulfillmentStatus,
   LocalState,
   OrderStatus,
   PaymentStatus,
@@ -16,6 +17,7 @@ const webhookSecret = "test_webhook_secret";
 process.env.STRIPE_SECRET_KEY = "test_stripe_secret_key";
 process.env.STRIPE_WEBHOOK_SECRET = webhookSecret;
 process.env.STRIPE_TEST_MODE_ONLY = "true";
+process.env.PRINTIFY_ENABLED = "false";
 
 const idSuffix = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 const localNumber = `TEST-${idSuffix}`;
@@ -151,12 +153,16 @@ async function main() {
     const reservation = await prisma.inventoryReservation.findUniqueOrThrow({ where: { id: reservationId } });
     const sku = await prisma.localSku.findUniqueOrThrow({ where: { sku: skuCode } });
     const payment = await prisma.payment.findUniqueOrThrow({ where: { id: paymentId } });
+    const fulfillment = await prisma.fulfillmentOrder.findUniqueOrThrow({ where: { orderId } });
 
     assert.equal(order.status, OrderStatus.PAID);
     assert.equal(order.customerEmail, "checkout-test@example.com");
     assert.equal(reservation.status, ReservationStatus.ALLOCATED);
     assert.equal(sku.allocatedCount, 1);
     assert.equal(payment.status, PaymentStatus.PAID);
+    assert.equal(fulfillment.status, FulfillmentStatus.NOT_SUBMITTED);
+    assert.equal(fulfillment.printifyOrderId, null);
+    assert.equal(first.fulfillmentAction, "disabled");
 
     console.log("checkout webhook tests passed");
   } finally {

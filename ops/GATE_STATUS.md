@@ -113,13 +113,12 @@ Status: in progress
 
 Next build target:
 
-- build controlled Printify fulfillment draft submission behind disabled flag
 - run live checkout rehearsal with one real purchase after explicit operator approval
 - verify paid allocation, no oversell, webhook idempotency, and fulfillment control
 
 Completed:
 
-- none
+- controlled Printify fulfillment draft submission built behind disabled `PRINTIFY_ENABLED` flag
 
 Blocked locally:
 
