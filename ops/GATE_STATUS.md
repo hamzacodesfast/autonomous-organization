@@ -120,7 +120,9 @@ Completed:
 
 - controlled Printify fulfillment draft submission built behind disabled `PRINTIFY_ENABLED` flag
 - controlled Printify draft order submission verified from Stripe test checkout; no production send endpoint is wired
+- live checkout payment completed per operator report; independent Stripe/Postgres/Printify verification intentionally skipped at operator request
+- post-rehearsal local fuses returned to disabled state
 
 Blocked locally:
 
-- live checkout and live fulfillment remain disabled until explicit operator approval
+- production launch remains blocked until operator approves public launch window and production deployment settings
