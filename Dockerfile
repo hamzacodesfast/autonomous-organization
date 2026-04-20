@@ -30,6 +30,9 @@ RUN npm ci --omit=dev && npm cache clean --force
 COPY prisma ./prisma
 RUN npx prisma generate
 
+COPY scripts ./scripts
+COPY docs ./docs
+COPY source ./source
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
 COPY next.config.ts ./

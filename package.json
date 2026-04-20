@@ -15,6 +15,7 @@
     "db:down": "docker compose down",
     "db:migrate": "node scripts/db-migrate.mjs",
     "seed": "node scripts/db-seed.mjs",
+    "seed:production": "node scripts/seed-production.mjs",
     "test:inventory": "tsx tests/inventory/reservations.test.ts",
     "test:checkout": "node scripts/db-test-checkout.mjs",
     "test:printify": "node scripts/db-test-printify.mjs",

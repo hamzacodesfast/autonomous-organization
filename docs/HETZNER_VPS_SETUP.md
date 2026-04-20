@@ -216,6 +216,13 @@ npm run launch:preflight -- --mode=launch
 
 passes on the VPS or against the production environment.
 
+Initial database setup inside Docker:
+
+```bash
+docker compose --env-file .env.production -f docker-compose.production.yml run --rm app npx prisma migrate deploy
+docker compose --env-file .env.production -f docker-compose.production.yml run --rm app npm run seed:production
+```
+
 ## Server Stack Install
 
 Install the stack on the VPS:

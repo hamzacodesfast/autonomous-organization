@@ -137,6 +137,8 @@ Use:
 ```bash
 docker compose --env-file .env.production -f docker-compose.production.yml build
 docker compose --env-file .env.production -f docker-compose.production.yml up -d
+docker compose --env-file .env.production -f docker-compose.production.yml run --rm app npx prisma migrate deploy
+docker compose --env-file .env.production -f docker-compose.production.yml run --rm app npm run seed:production
 ```
 
 The launch preflight blocks on:
