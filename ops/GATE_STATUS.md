@@ -41,12 +41,14 @@ Status: in progress
 Next build target:
 
 - confirm Discord webhooks that previously appeared in `.env.example` have been rotated
-- run failed Stripe test card checkout and verify no allocation
 - Printify draft fulfillment mapping
 - policy text human approval
 
 Completed:
 
+- failed Stripe test card checkout verified with no inventory allocation
+- failed Checkout Session expiration cleanup verified against local Postgres
+- declined-card webhook events observed with 200 responses
 - hosted Stripe test card purchase completed through Checkout
 - paid hosted Checkout webhook verified against local Postgres allocation path
 - duplicate Stripe webhook replay verified through local endpoint
