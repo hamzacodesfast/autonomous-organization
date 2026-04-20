@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080" role="img" aria-labelledby="title desc">
+  <title id="title">Autonomous Organization AO social avatar</title>
+  <desc id="desc">A square off-white social avatar with the AO monogram in ink black and a safety orange rule.</desc>
+  <defs>
+    <style>
+      .paper { fill: #F4F1EA; }
+      .ink { fill: #111111; }
+      .orange { fill: #FE5000; }
+      .mark {
+        font-family: Inter, Arial, Helvetica, sans-serif;
+        font-size: 430px;
+        font-weight: 600;
+        letter-spacing: 0;
+      }
+    </style>
+  </defs>
+  <rect class="paper" width="1080" height="1080"/>
+  <text class="mark ink" x="540" y="616" text-anchor="middle">AO</text>
+  <rect class="orange" x="230" y="744" width="620" height="12"/>
+</svg>

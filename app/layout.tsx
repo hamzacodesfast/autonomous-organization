@@ -3,8 +3,31 @@ import Link from "next/link";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://autonomousorganization.io"),
   title: "Autonomous Organization",
   description: "Issued goods and operational records.",
+  icons: {
+    icon: "/social/ao-avatar-1080x1080.png",
+    apple: "/social/ao-avatar-1080x1080.png",
+  },
+  openGraph: {
+    title: "Autonomous Organization",
+    description: "Issued goods and operational records.",
+    images: [
+      {
+        url: "/social/ao-share-banner-1200x630.png",
+        width: 1200,
+        height: 630,
+        alt: "Autonomous Organization Local No. 001",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Autonomous Organization",
+    description: "Issued goods and operational records.",
+    images: ["/social/ao-share-banner-1200x630.png"],
+  },
 };
 
 const navItems = [

@@ -11,7 +11,8 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "seed": "tsx prisma/seed.ts",
-    "test:inventory": "tsx tests/inventory/reservations.test.ts"
+    "test:inventory": "tsx tests/inventory/reservations.test.ts",
+    "export:social": "node scripts/export-social-assets.mjs"
   },
   "dependencies": {
     "@prisma/client": "6.19.3",
@@ -27,6 +28,7 @@
     "@types/react-dom": "19.2.3",
     "eslint": "9.39.4",
     "eslint-config-next": "16.2.4",
+    "sharp": "0.34.5",
     "tsx": "4.21.0",
     "typescript": "6.0.3"
   }

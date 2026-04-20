@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">Autonomous Organization primary mark</title>
+  <desc id="desc">The Autonomous Organization primary mark reading AUTONOMOUS, ORGANIZATION, LOCAL NO. 001.</desc>
+  <defs>
+    <style>
+      .ink { fill: #111111; }
+      .mark {
+        font-family: Inter, Arial, Helvetica, sans-serif;
+        font-size: 132px;
+        font-weight: 600;
+        letter-spacing: 0;
+      }
+    </style>
+  </defs>
+  <text class="mark ink" x="60" y="162">AUTONOMOUS</text>
+  <text class="mark ink" x="60" y="286">ORGANIZATION</text>
+  <text class="mark ink" x="60" y="410">LOCAL NO. 001</text>
+</svg>

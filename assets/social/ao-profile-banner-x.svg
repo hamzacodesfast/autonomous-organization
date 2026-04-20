@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="500" viewBox="0 0 1500 500" role="img" aria-labelledby="title desc">
+  <title id="title">Autonomous Organization X profile banner</title>
+  <desc id="desc">A profile banner with the Autonomous Organization primary mark, current Local No. 001, and operational issue language.</desc>
+  <defs>
+    <style>
+      .paper { fill: #F4F1EA; }
+      .ink { fill: #111111; }
+      .orange { fill: #FE5000; }
+      .rule {
+        stroke: #111111;
+        stroke-width: 2;
+        shape-rendering: crispEdges;
+      }
+      .mark {
+        font-family: Inter, Arial, Helvetica, sans-serif;
+        font-size: 82px;
+        font-weight: 600;
+        letter-spacing: 0;
+      }
+      .mono {
+        font-family: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+        font-size: 23px;
+        font-weight: 400;
+        letter-spacing: 0;
+      }
+      .mono-small {
+        font-family: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+        font-size: 18px;
+        font-weight: 400;
+        letter-spacing: 0;
+      }
+      .local {
+        font-family: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+        font-size: 176px;
+        font-weight: 400;
+        letter-spacing: 0;
+      }
+    </style>
+  </defs>
+  <rect class="paper" width="1500" height="500"/>
+  <rect class="orange" x="0" y="0" width="18" height="500"/>
+  <line class="rule" x1="360" y1="82" x2="1435" y2="82"/>
+  <text class="mono ink" x="360" y="119">AUTONOMOUSORGANIZATION.IO</text>
+  <text class="mono-small ink" x="360" y="154">CURRENT LOCAL: 001</text>
+  <text class="mark ink" x="360" y="239">AUTONOMOUS</text>
+  <text class="mark ink" x="360" y="316">ORGANIZATION</text>
+  <text class="mark ink" x="360" y="393">LOCAL NO. 001</text>
+  <text class="mono-small ink" x="1155" y="184">LOCAL RECORD</text>
+  <text class="local ink" x="1138" y="341">001</text>
+  <line class="rule" x1="360" y1="420" x2="1435" y2="420"/>
+  <text class="mono-small ink" x="360" y="452">ISSUED GOODS AND OPERATIONAL RECORDS</text>
+  <text class="mono-small ink" x="1028" y="452">100 UNITS / NO RESTOCKS</text>
+</svg>

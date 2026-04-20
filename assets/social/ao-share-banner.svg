@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">Autonomous Organization social share banner</title>
+  <desc id="desc">A social preview banner for Autonomous Organization with the primary mark and Local No. 001 issue details.</desc>
+  <defs>
+    <style>
+      .paper { fill: #F4F1EA; }
+      .ink { fill: #111111; }
+      .orange { fill: #FE5000; }
+      .rule {
+        stroke: #111111;
+        stroke-width: 2;
+        shape-rendering: crispEdges;
+      }
+      .mark {
+        font-family: Inter, Arial, Helvetica, sans-serif;
+        font-size: 108px;
+        font-weight: 600;
+        letter-spacing: 0;
+      }
+      .mono {
+        font-family: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+        font-size: 23px;
+        font-weight: 400;
+        letter-spacing: 0;
+      }
+      .mono-small {
+        font-family: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+        font-size: 18px;
+        font-weight: 400;
+        letter-spacing: 0;
+      }
+    </style>
+  </defs>
+  <rect class="paper" width="1200" height="630"/>
+  <rect class="orange" x="0" y="0" width="1200" height="14"/>
+  <line class="rule" x1="78" y1="90" x2="1120" y2="90"/>
+  <text class="mono-small ink" x="78" y="130">ISSUED GOODS AND OPERATIONAL RECORDS</text>
+  <text class="mark ink" x="78" y="250">AUTONOMOUS</text>
+  <text class="mark ink" x="78" y="352">ORGANIZATION</text>
+  <text class="mark ink" x="78" y="454">LOCAL NO. 001</text>
+  <line class="rule" x1="78" y1="502" x2="1120" y2="502"/>
+  <text class="mono ink" x="78" y="552">FOUNDING ARTIFACT / 100 UNITS / NO RESTOCKS</text>
+</svg>
