@@ -29,6 +29,10 @@ function checkoutStatusText(status: string | string[] | undefined) {
     return "Select an available size.";
   }
 
+  if (value === "config_error") {
+    return "Checkout configuration halted before payment. Operator must check server settings.";
+  }
+
   if (value) {
     return "Checkout could not start. The Organization halted before payment.";
   }
