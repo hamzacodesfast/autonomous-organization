@@ -119,6 +119,7 @@ Next build target:
 Completed:
 
 - controlled Printify fulfillment draft submission built behind disabled `PRINTIFY_ENABLED` flag
+- controlled Printify draft order submission verified from Stripe test checkout; no production send endpoint is wired
 
 Blocked locally:
 
