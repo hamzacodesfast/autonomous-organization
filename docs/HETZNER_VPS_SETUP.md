@@ -185,6 +185,7 @@ Repo deployment files:
 - `docker-compose.production.yml`
 - `deploy/production.env.example`
 - `deploy/Caddyfile.example`
+- `deploy/Caddyfile.ip-smoke.example`
 - `app/api/health/route.ts`
 
 Server paths:
@@ -207,6 +208,8 @@ Caddy should reverse proxy the public HTTPS domain to:
 ```text
 127.0.0.1:3000
 ```
+
+Before DNS is ready, the server may temporarily use `deploy/Caddyfile.ip-smoke.example` to expose the locked app over plain HTTP by IP. This is only for smoke testing. Replace it with the production domain Caddyfile before opening checkout.
 
 Do not open checkout until:
 
@@ -247,6 +250,22 @@ docker ps
 systemctl is-active docker
 systemctl is-active caddy
 ```
+
+## Current VPS State
+
+As of 2026-04-20, the production VPS is:
+
+- Host: `ao-production-001`
+- IPv4: `62.238.9.164`
+- Deploy user: `ao_deploy`
+- App path: `/srv/autonomous-organization/app`
+- App commit: `87b6526`
+- Runtime: Docker Compose
+- Reverse proxy: Caddy, currently in HTTP IP-smoke mode
+- App health: healthy on `127.0.0.1:3000`
+- Postgres health: healthy in Docker
+- Local No. 001 production seed: `100` units, `20` each for `S`, `M`, `L`, `XL`, and `XXL`
+- Public ingress: blocked until the Hetzner cloud firewall allows inbound `80/tcp` and `443/tcp`
 
 ## Immediate Next Checklist
 

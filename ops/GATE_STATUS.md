@@ -128,11 +128,14 @@ Blocked locally:
 
 ## Gate 4 — Production Launch Package
 
-Status: launch window approved; production preflight pending
+Status: production stack installed; public ingress and production preflight pending
 
 Next build target:
 
-- clone app repo onto Hetzner and create production env file
+- allow public HTTP/HTTPS in the Hetzner cloud firewall
+- point the production domain to `62.238.9.164`
+- switch Caddy from IP smoke mode to the production HTTPS domain
+- configure the live Stripe webhook endpoint for the production URL
 - run production launch preflight in deployed environment
 - open public checkout only after production preflight passes
 
@@ -150,7 +153,19 @@ Completed:
 - server firewall enabled for SSH, HTTP, and HTTPS
 - Docker, Docker Compose, and Caddy installed on Hetzner
 - deploy user verified for Docker access
+- app repo cloned to Hetzner at `/srv/autonomous-organization/app`
+- production env file created on Hetzner with checkout, Stripe live mode, and Printify fuses locked
+- production Docker image built on Hetzner with OpenSSL available for Prisma
+- production Postgres container started and healthy
+- initial Prisma migration applied against production Postgres
+- Local No. 001 seeded in production Postgres with `100` total units and `20` each for `S`, `M`, `L`, `XL`, and `XXL`
+- app container started and healthy on `127.0.0.1:3000`
+- Caddy configured in HTTP IP-smoke mode to reverse proxy `127.0.0.1:3000`
+- VPS-local health check passed at `http://127.0.0.1/api/health`
 
 Blocked locally:
 
+- public HTTP check to `62.238.9.164` timed out from workstation even though Caddy and UFW are correct on-server; Hetzner cloud firewall ingress for `80/tcp` and `443/tcp` needs confirmation
+- production HTTPS/domain is not configured yet
+- live Stripe webhook endpoint is not configured for the production URL yet
 - production launch preflight has not been run in the deployed environment
