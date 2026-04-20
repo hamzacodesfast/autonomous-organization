@@ -31,10 +31,10 @@
 ## Commerce
 
 - Retail price: $50 USD
-- Cost estimate: $9.48 USD for `S` through `XL`; $11.45 USD for `XXL`, before shipping, tax, discounts, refunds, and platform fees
-- Gross margin: pending shipping/tax validation
-- Shipping profile: International intent recorded; country list pending Printify/Stripe/tax validation
-- Tax settings: pending human approval
+- Cost estimate: $9.48 USD for `S` through `XL`; $11.45 USD for `XXL`, before payment/platform fees, refunds, and destination-dependent fulfillment variance
+- Gross margin: human-accepted for shipping-included launch model; final margin varies by destination, size, carrier behavior, taxes, refunds, and fees
+- Shipping profile: shipping included in the listed retail price for countries available at checkout; fulfillment through Printify
+- Tax settings: human-confirmed for launch rehearsal without enabling separate Stripe automatic tax collection; operator retains responsibility for accounting and tax treatment
 - Stripe product ID: pending
 - Stripe price ID: pending
 - Printify product ID: `69e5bbbbc109d487ac09e911`
@@ -82,6 +82,7 @@ Edition: 100 units. No restocks.
 
 - Compliance review ID: pending
 - Approval ID: `AO-APPROVAL-0003`
+- Commerce approval ID: `AO-APPROVAL-0004`
 - Approved by: `hamzacodesfast`
 - Approval timestamp: 2026-04-20T09:58:56Z
 - Proof/sample approved: yes

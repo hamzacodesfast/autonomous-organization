@@ -73,3 +73,26 @@ Operational effect:
 - Local No. 001 physical sample / production proof is human-approved.
 - The production file, Printify draft, and mockup may proceed to shipping/tax validation.
 - Live checkout still requires shipping/tax confirmation and live checkout rehearsal approval.
+
+## AO-APPROVAL-0004
+
+- Date: 2026-04-20
+- UTC timestamp: 2026-04-20T10:06:36Z
+- Channel: Codex operator chat
+- Approver: `hamzacodesfast`
+- Scope: Local No. 001 shipping profile and tax behavior for launch rehearsal
+- Local number: `001`
+- Decision: approved
+
+Approved operating decision:
+
+- Shipping is included in the listed $50 USD retail price for countries available at checkout.
+- Fulfillment is handled through Printify after paid allocation.
+- Separate Stripe automatic tax collection is not being enabled before live checkout rehearsal.
+- The human operator accepts responsibility for accounting and tax treatment outside the app workflow.
+
+Operational effect:
+
+- Gate 2 shipping profile and tax behavior confirmation is complete.
+- Local No. 001 may proceed to live checkout rehearsal preparation.
+- `PRINTIFY_ENABLED` remains false until controlled fulfillment submission is implemented and separately approved.

@@ -26,7 +26,7 @@ Never commit:
 
 ## Current Gate
 
-Gate 1 is complete. Gate 2 is in progress: Local No. 001 needs a human-approved physical sample or production proof before live checkout rehearsal.
+Gate 2 is complete. Gate 3 is in progress: live checkout rehearsal preparation, with fulfillment still disabled until explicit operator approval.
 
 ## Local Development
 

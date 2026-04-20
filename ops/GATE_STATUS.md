@@ -89,14 +89,15 @@ Blocked locally:
 
 ## Gate 2 — Production Files And Proof
 
-Status: in progress
+Status: complete
 
 Next build target:
 
-- confirm shipping profile and tax settings before live checkout rehearsal
+- none
 
 Completed:
 
+- shipping profile and tax behavior human-confirmed: `AO-APPROVAL-0004`
 - Local No. 001 physical sample / production proof human-approved: `AO-APPROVAL-0003`
 - Local No. 001 production file generated and checksum recorded
 - Printify draft product mockup generated and recorded
@@ -105,3 +106,21 @@ Completed:
 Blocked locally:
 
 - none
+
+## Gate 3 — Live Checkout Rehearsal
+
+Status: in progress
+
+Next build target:
+
+- build controlled Printify fulfillment draft submission behind disabled flag
+- run live checkout rehearsal with one real purchase after explicit operator approval
+- verify paid allocation, no oversell, webhook idempotency, and fulfillment control
+
+Completed:
+
+- none
+
+Blocked locally:
+
+- live checkout and live fulfillment remain disabled until explicit operator approval
