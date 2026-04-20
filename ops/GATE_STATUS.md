@@ -132,7 +132,7 @@ Status: launch window approved; production preflight pending
 
 Next build target:
 
-- run locked launch preflight
+- install production app stack on Hetzner
 - run production launch preflight in deployed environment
 - open public checkout only after production preflight passes
 
@@ -143,6 +143,11 @@ Completed:
 - launch preflight script added
 - locked launch preflight passed with local paid-order reconciliation warning
 - public launch window approved: `AO-APPROVAL-0007`
+- Hetzner VPS `ao-production-001` provisioned
+- SSH shortcut `ao-production` verified with deploy user
+- `ao_deploy` sudo user created
+- server SSH hardening applied
+- server firewall enabled for SSH, HTTP, and HTTPS
 
 Blocked locally:
 
