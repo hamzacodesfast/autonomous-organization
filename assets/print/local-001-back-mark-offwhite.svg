@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="3000" height="1320" viewBox="0 0 3000 1320" role="img" aria-labelledby="title desc">
+  <title id="title">Local No. 001 back print mark</title>
+  <desc id="desc">The Autonomous Organization primary mark for Local No. 001, rendered in off-white for a black tee.</desc>
+  <defs>
+    <style>
+      .mark {
+        fill: #F4F1EA;
+        font-family: Inter, Arial, Helvetica, sans-serif;
+        font-size: 392px;
+        font-weight: 600;
+        letter-spacing: 0;
+      }
+    </style>
+  </defs>
+  <text class="mark" x="0" y="314">AUTONOMOUS</text>
+  <text class="mark" x="0" y="682">ORGANIZATION</text>
+  <text class="mark" x="0" y="1050">LOCAL NO. 001</text>
+</svg>

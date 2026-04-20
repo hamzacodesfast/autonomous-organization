@@ -17,7 +17,8 @@
     "seed": "node scripts/db-seed.mjs",
     "test:inventory": "tsx tests/inventory/reservations.test.ts",
     "test:checkout": "node scripts/db-test-checkout.mjs",
-    "export:social": "node scripts/export-social-assets.mjs"
+    "export:social": "node scripts/export-social-assets.mjs",
+    "export:print": "node scripts/export-print-assets.mjs"
   },
   "dependencies": {
     "@prisma/client": "6.19.3",

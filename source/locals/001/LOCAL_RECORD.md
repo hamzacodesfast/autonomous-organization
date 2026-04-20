@@ -42,9 +42,9 @@
 
 ## Assets
 
-- Editable source file: pending
-- Production file: pending
-- Production file checksum: pending
+- Editable source file: `assets/print/local-001-back-mark-offwhite.svg`
+- Production file: `assets/print/local-001-back-mark-offwhite.png`
+- Production file checksum: `sha256:7f0327d5781fa57838748c0ad8b351f529b97a9388811391fdd86cadeaa7bb8c`
 - Front mockup: `assets/GILDAN5000_FRONT.png`
 - Back mockup: `assets/GILDAN5000_BACK.png`
 - Font list: Inter Semi Bold
