@@ -33,7 +33,6 @@ export default async function HomePage() {
         <ProductMockup
           src={local001.backMockup}
           alt="Back mockup of Local No. 001 black tee with primary mark"
-          mark
           priority
         />
         <ProductMockup

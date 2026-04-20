@@ -90,7 +90,6 @@ export default async function Local001Page({ searchParams }: Local001PageProps) 
         <ProductMockup
           src={local001.backMockup}
           alt="Back mockup of Local No. 001 black tee with primary mark"
-          mark
           priority
         />
         <ProductMockup

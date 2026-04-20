@@ -42,7 +42,7 @@ export const local001: PublicLocal = {
   graphic: "Primary Organization mark printed on the back.",
   specifications: "Sizes S-XXL. 100 units total.",
   frontMockup: "/mockups/GILDAN5000_FRONT.png",
-  backMockup: "/mockups/GILDAN5000_BACK.png",
+  backMockup: "/mockups/PRINTIFY_GILDAN5000_BACK.png",
   allocation: [
     { size: "S", quantity: 20 },
     { size: "M", quantity: 20 },
