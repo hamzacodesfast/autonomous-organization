@@ -40,12 +40,12 @@ Status: in progress
 
 Next build target:
 
-- confirm Discord webhooks that previously appeared in `.env.example` have been rotated
 - Printify draft fulfillment mapping
 - policy text human approval
 
 Completed:
 
+- Discord webhooks that previously appeared in `.env.example` confirmed rotated by human operator
 - failed Stripe test card checkout verified with no inventory allocation
 - failed Checkout Session expiration cleanup verified against local Postgres
 - declined-card webhook events observed with 200 responses
