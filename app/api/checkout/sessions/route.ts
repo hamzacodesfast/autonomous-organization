@@ -17,13 +17,26 @@ async function checkoutSizeFromRequest(request: Request) {
   return typeof size === "string" ? size : "";
 }
 
-function requestOrigin(request: Request) {
+function publicOrigin(request: Request) {
+  const configuredOrigin = process.env.PUBLIC_SITE_URL || process.env.APP_URL;
+
+  if (configuredOrigin) {
+    return configuredOrigin.replace(/\/$/, "");
+  }
+
+  const forwardedHost = request.headers.get("x-forwarded-host") ?? request.headers.get("host");
+  const forwardedProto = request.headers.get("x-forwarded-proto");
+
+  if (forwardedHost) {
+    return `${forwardedProto ?? "https"}://${forwardedHost}`;
+  }
+
   const url = new URL(request.url);
   return url.origin;
 }
 
 function errorRedirect(request: Request, error: unknown) {
-  const url = new URL("/locals/001", request.url);
+  const url = new URL("/locals/001", `${publicOrigin(request)}/`);
 
   if (error instanceof CheckoutError) {
     url.searchParams.set("checkout", error.code);
@@ -42,7 +55,7 @@ export async function POST(request: Request) {
   try {
     const result = await createCheckoutSessionForLocal001({
       size: await checkoutSizeFromRequest(request),
-      requestOrigin: requestOrigin(request),
+      requestOrigin: publicOrigin(request),
     });
 
     if (wantsJson(request)) {
