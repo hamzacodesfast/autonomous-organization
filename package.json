@@ -16,6 +16,7 @@
     "db:migrate": "node scripts/db-migrate.mjs",
     "seed": "node scripts/db-seed.mjs",
     "test:inventory": "tsx tests/inventory/reservations.test.ts",
+    "test:checkout": "node scripts/db-test-checkout.mjs",
     "export:social": "node scripts/export-social-assets.mjs"
   },
   "dependencies": {
@@ -24,6 +25,7 @@
     "prisma": "6.19.3",
     "react": "19.2.5",
     "react-dom": "19.2.5",
+    "stripe": "^22.0.2",
     "zod": "4.1.13"
   },
   "devDependencies": {

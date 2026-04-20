@@ -42,6 +42,7 @@ Run checks:
 npm run lint
 npm run typecheck
 npm run test:inventory
+npm run test:checkout
 ```
 
 ## Local Postgres
@@ -64,3 +65,31 @@ ENABLE_DATABASE_READS=true npm run dev
 ```
 
 Keep real secrets in `.env` or the human-controlled secret store. `.env.example` must contain placeholder values only.
+
+## Stripe Test Checkout
+
+Stripe Checkout is disabled until the local database is migrated, seeded, and explicit test-mode variables are set.
+
+Required local environment values:
+
+```bash
+ENABLE_DATABASE_READS=true
+STRIPE_CHECKOUT_ENABLED=true
+STRIPE_TEST_MODE_ONLY=true
+STRIPE_SECRET_KEY=sk_test_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+```
+
+Forward Stripe test webhooks to the app:
+
+```bash
+stripe listen --forward-to localhost:3000/api/stripe/webhook
+```
+
+Then start the app:
+
+```bash
+ENABLE_DATABASE_READS=true STRIPE_CHECKOUT_ENABLED=true npm run dev
+```
+
+Use Stripe-hosted Checkout from `/locals/001`. The browser success page does not allocate inventory; only signed Stripe webhooks can mark orders paid.

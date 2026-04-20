@@ -41,12 +41,19 @@ Status: in progress
 Next build target:
 
 - confirm Discord webhooks that previously appeared in `.env.example` have been rotated
-- Stripe test-mode checkout
+- complete one hosted Stripe test card purchase through Checkout
+- replay duplicate Stripe webhook through local endpoint
 - Printify draft fulfillment mapping
 - policy text human approval
 
 Completed:
 
+- Stripe Node SDK added
+- Stripe test-mode Checkout Session route added
+- Stripe signed webhook route added
+- webhook duplicate protection verified through `WebhookEvent`
+- paid checkout webhook allocation verified against local Postgres
+- product page test-checkout form added behind `STRIPE_CHECKOUT_ENABLED`
 - local Postgres Docker Compose file added
 - local database prerequisite check added
 - initial Prisma migration generated
@@ -65,4 +72,4 @@ Completed:
 
 Blocked locally:
 
-- none
+- Stripe CLI is not installed, so hosted Checkout webhook forwarding has not been run from this workstation.

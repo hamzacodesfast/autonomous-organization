@@ -1,10 +1,46 @@
 import { ProductMockup } from "@/app/components/product-mockup";
 import { getCurrentLocal } from "@/lib/locals-repository";
+import { stripeCheckoutEnabled } from "@/lib/stripe";
 
 export const dynamic = "force-dynamic";
 
-export default async function Local001Page() {
+type Local001PageProps = {
+  searchParams?: Promise<{
+    checkout?: string | string[];
+  }>;
+};
+
+function checkoutStatusText(status: string | string[] | undefined) {
+  const value = Array.isArray(status) ? status[0] : status;
+
+  if (value === "cancelled") {
+    return "Checkout cancelled. Inventory returns only through server records.";
+  }
+
+  if (value === "sold_out") {
+    return "Selected size is sold out.";
+  }
+
+  if (value === "checkout_disabled") {
+    return "Checkout is disabled until the test-mode gate is open.";
+  }
+
+  if (value === "invalid_size") {
+    return "Select an available size.";
+  }
+
+  if (value) {
+    return "Checkout could not start. The Organization halted before payment.";
+  }
+
+  return null;
+}
+
+export default async function Local001Page({ searchParams }: Local001PageProps) {
   const local001 = await getCurrentLocal();
+  const checkoutEnabled = stripeCheckoutEnabled();
+  const params = await searchParams;
+  const checkoutStatus = checkoutStatusText(params?.checkout);
 
   return (
     <>
@@ -23,9 +59,30 @@ export default async function Local001Page() {
             <li>Edition: {local001.editionCount} units. No restocks.</li>
             <li>Shipping: {local001.shipping}</li>
           </ul>
-          <span className="button" aria-disabled="true">
-            Checkout Disabled
-          </span>
+          {checkoutStatus ? <p className="status-note">{checkoutStatus}</p> : null}
+          {checkoutEnabled ? (
+            <form className="checkout-form" action="/api/checkout/sessions" method="post">
+              <fieldset>
+                <legend>Size</legend>
+                <div className="size-grid">
+                  {local001.allocation.map((row) => (
+                    <label key={row.size}>
+                      <input name="size" type="radio" value={row.size} required />
+                      <span>{row.size}</span>
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
+              <button className="button" type="submit">
+                Test Checkout
+              </button>
+              <p className="form-note">Stripe test mode only. Server records decide allocation.</p>
+            </form>
+          ) : (
+            <span className="button" aria-disabled="true">
+              Checkout Disabled
+            </span>
+          )}
         </div>
       </section>
 

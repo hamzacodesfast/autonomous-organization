@@ -313,6 +313,28 @@ Acceptance:
 
 Implement Checkout Sessions.
 
+Local commands:
+
+```bash
+npm run db:check
+npm run db:up
+npm run db:migrate
+npm run seed
+npm run test:checkout
+stripe listen --forward-to localhost:3000/api/stripe/webhook
+ENABLE_DATABASE_READS=true STRIPE_CHECKOUT_ENABLED=true npm run dev
+```
+
+Required local Stripe values:
+
+```bash
+STRIPE_TEST_MODE_ONLY=true
+STRIPE_SECRET_KEY=sk_test_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+```
+
+Do not set `STRIPE_TEST_MODE_ONLY=false` or use live keys before the live checkout rehearsal gate.
+
 Flow:
 
 1. Reservation exists.
