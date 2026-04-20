@@ -41,13 +41,15 @@ Status: in progress
 Next build target:
 
 - confirm Discord webhooks that previously appeared in `.env.example` have been rotated
-- complete one hosted Stripe test card purchase through Checkout
-- replay duplicate Stripe webhook through local endpoint
+- run failed Stripe test card checkout and verify no allocation
 - Printify draft fulfillment mapping
 - policy text human approval
 
 Completed:
 
+- hosted Stripe test card purchase completed through Checkout
+- paid hosted Checkout webhook verified against local Postgres allocation path
+- duplicate Stripe webhook replay verified through local endpoint
 - Stripe CLI installed and authenticated on workstation
 - Stripe CLI webhook forwarding verified against local endpoint
 - Stripe test event burst verified with all webhook responses returning 200
