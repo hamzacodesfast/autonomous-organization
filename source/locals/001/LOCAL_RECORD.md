@@ -13,7 +13,7 @@
 - Supplier: pending Printify selection
 - Print provider: pending Printify selection
 - Garment colorways: Black
-- Sizes: `S`, `M`, `L`, `XL`
+- Sizes: `S`, `M`, `L`, `XL`, `XXL`
 - Placement: back only
 - Print method: pending Printify selection
 
@@ -21,10 +21,11 @@
 
 - Edition count: 100
 - Size allocation:
-  - `S`: 30
-  - `M`: 30
-  - `L`: 30
-  - `XL`: 10
+  - `S`: 20
+  - `M`: 20
+  - `L`: 20
+  - `XL`: 20
+  - `XXL`: 20
 - Restock policy: no restocks
 
 ## Commerce
@@ -59,7 +60,7 @@ Issued by Local No. 001, [DATE].
 
 Black Gildan 5000 short-sleeve tee.
 Primary Organization mark printed on the back.
-Sizes S-XL. 100 units total.
+Sizes S-XXL. 100 units total.
 
 Edition: 100 units. No restocks.
 ```

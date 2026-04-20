@@ -282,7 +282,7 @@ Seed Local No. 001:
 - color: `Black`
 - placement: back only
 - edition count: `100`
-- allocation: `S=30`, `M=30`, `L=30`, `XL=10`
+- allocation: `S=20`, `M=20`, `L=20`, `XL=20`, `XXL=20`
 - state: `concept_draft`
 
 Acceptance:
@@ -305,7 +305,7 @@ Implement reservation flow:
 
 Acceptance:
 
-- 50 concurrent attempts for `XL` cannot reserve more than 10.
+- 50 concurrent attempts for `XXL` cannot reserve more than 20.
 - reservation expiration works.
 - admin reconciliation shows available, reserved, allocated, and sold-out counts.
 
@@ -559,7 +559,7 @@ Do this on launch day.
 1. Freeze deploys.
 2. Open monitoring.
 3. Set Discord `#alerts` visible.
-4. Confirm inventory: `S=30`, `M=30`, `L=30`, `XL=10`.
+4. Confirm inventory: `S=20`, `M=20`, `L=20`, `XL=20`, `XXL=20`.
 
 ### T equals 11:00 AM Eastern
 

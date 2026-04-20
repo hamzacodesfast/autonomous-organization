@@ -25,7 +25,7 @@ type LockedSku = LocalSku & {
 type CheckoutSessionCreateParams = NonNullable<Parameters<Stripe["checkout"]["sessions"]["create"]>[0]>;
 type ShippingAllowedCountry = NonNullable<CheckoutSessionCreateParams["shipping_address_collection"]>["allowed_countries"][number];
 
-const checkoutSizeSchema = z.enum(["S", "M", "L", "XL"]);
+const checkoutSizeSchema = z.enum(["S", "M", "L", "XL", "XXL"]);
 const local001SkuPrefix = "AO-001-BLACK";
 const defaultReservationMinutes = 31;
 

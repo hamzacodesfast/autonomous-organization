@@ -9,7 +9,7 @@ import {
 
 const now = new Date("2026-04-19T16:00:00.000Z");
 const expiresAt = new Date("2026-04-19T16:15:00.000Z");
-const sku = "AO-001-BLACK-XL";
+const sku = "AO-001-BLACK-XXL";
 
 let state = createLocal001Inventory();
 let successes = 0;
@@ -33,8 +33,8 @@ for (let index = 0; index < 50; index += 1) {
   }
 }
 
-assert.equal(successes, 10);
-assert.equal(failures, 40);
+assert.equal(successes, 20);
+assert.equal(failures, 30);
 assert.equal(availableCount(state, sku, now), 0);
 
 state = allocateReservation(state, "test-reservation-0", now);
@@ -43,6 +43,6 @@ assert.equal(state.skus[sku]?.allocatedCount, 1);
 const afterExpiry = new Date("2026-04-19T16:16:00.000Z");
 state = expireReservations(state, afterExpiry);
 
-assert.equal(availableCount(state, sku, afterExpiry), 9);
+assert.equal(availableCount(state, sku, afterExpiry), 19);
 
 console.log("inventory reservation tests passed");

@@ -36,10 +36,11 @@ export type ReservationResult =
 export function createLocal001Inventory(): InventoryState {
   return {
     skus: {
-      "AO-001-BLACK-S": { sku: "AO-001-BLACK-S", editionCeiling: 30, allocatedCount: 0 },
-      "AO-001-BLACK-M": { sku: "AO-001-BLACK-M", editionCeiling: 30, allocatedCount: 0 },
-      "AO-001-BLACK-L": { sku: "AO-001-BLACK-L", editionCeiling: 30, allocatedCount: 0 },
-      "AO-001-BLACK-XL": { sku: "AO-001-BLACK-XL", editionCeiling: 10, allocatedCount: 0 },
+      "AO-001-BLACK-S": { sku: "AO-001-BLACK-S", editionCeiling: 20, allocatedCount: 0 },
+      "AO-001-BLACK-M": { sku: "AO-001-BLACK-M", editionCeiling: 20, allocatedCount: 0 },
+      "AO-001-BLACK-L": { sku: "AO-001-BLACK-L", editionCeiling: 20, allocatedCount: 0 },
+      "AO-001-BLACK-XL": { sku: "AO-001-BLACK-XL", editionCeiling: 20, allocatedCount: 0 },
+      "AO-001-BLACK-XXL": { sku: "AO-001-BLACK-XXL", editionCeiling: 20, allocatedCount: 0 },
     },
     reservations: {},
   };

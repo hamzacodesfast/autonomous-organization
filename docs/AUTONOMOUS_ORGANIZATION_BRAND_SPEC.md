@@ -143,7 +143,7 @@ No gradients. No chrome. No rainbow. No pastel. No neon except the two locked ac
 
 - Gildan 5000 short-sleeve tee.
 - Required mockup files: `GILDAN5000_FRONT.png` and `GILDAN5000_BACK.png`.
-- Approved sizes: `S`, `M`, `L`, `XL`.
+- Approved sizes: `S`, `M`, `L`, `XL`, `XXL`.
 - Approved garment colorways: the § 3.1 core palette, subject to supplier availability and human approval per Local.
 
 No other blank, cut, garment category, supplier, print provider, size range, or material enters production until the human amends this section.
@@ -188,10 +188,11 @@ One release per two weeks. Thursdays at 11:00 AM Eastern. The scheduling timezon
 
 One design per release. Never more than one. Default edition size is exactly 100 units:
 
-- `S`: 30
-- `M`: 30
-- `L`: 30
-- `XL`: 10
+- `S`: 20
+- `M`: 20
+- `L`: 20
+- `XL`: 20
+- `XXL`: 20
 
 The aggregate edition count is fixed before launch. If multiple garment colorways are approved for a Local, the total across all colors and sizes remains 100 unless the human explicitly approves a different edition count.
 

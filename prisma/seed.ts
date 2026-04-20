@@ -3,10 +3,11 @@ import { ActionState, ApprovalDecision, LocalState, PrismaClient } from "@prisma
 const prisma = new PrismaClient();
 
 const allocation = [
-  { size: "S", quantity: 30 },
-  { size: "M", quantity: 30 },
-  { size: "L", quantity: 30 },
-  { size: "XL", quantity: 10 },
+  { size: "S", quantity: 20 },
+  { size: "M", quantity: 20 },
+  { size: "L", quantity: 20 },
+  { size: "XL", quantity: 20 },
+  { size: "XXL", quantity: 20 },
 ] as const;
 
 async function main() {
@@ -26,7 +27,7 @@ async function main() {
         "",
         "Black Gildan 5000 short-sleeve tee.",
         "Primary Organization mark printed on the back.",
-        "Sizes S-XL. 100 units total.",
+        "Sizes S-XXL. 100 units total.",
         "",
         "Edition: 100 units. No restocks.",
       ].join("\n"),
@@ -47,7 +48,7 @@ async function main() {
         "",
         "Black Gildan 5000 short-sleeve tee.",
         "Primary Organization mark printed on the back.",
-        "Sizes S-XL. 100 units total.",
+        "Sizes S-XXL. 100 units total.",
         "",
         "Edition: 100 units. No restocks.",
       ].join("\n"),
