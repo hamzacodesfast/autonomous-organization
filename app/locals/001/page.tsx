@@ -22,7 +22,7 @@ function checkoutStatusText(status: string | string[] | undefined) {
   }
 
   if (value === "checkout_disabled") {
-    return "Checkout is disabled until the test-mode gate is open.";
+    return "Checkout is disabled until the commerce gate is open.";
   }
 
   if (value === "invalid_size") {
@@ -43,6 +43,7 @@ function checkoutStatusText(status: string | string[] | undefined) {
 export default async function Local001Page({ searchParams }: Local001PageProps) {
   const local001 = await getCurrentLocal();
   const checkoutEnabled = stripeCheckoutEnabled();
+  const liveCheckoutMode = process.env.STRIPE_TEST_MODE_ONLY === "false";
   const params = await searchParams;
   const checkoutStatus = checkoutStatusText(params?.checkout);
 
@@ -78,9 +79,13 @@ export default async function Local001Page({ searchParams }: Local001PageProps) 
                 </div>
               </fieldset>
               <button className="button" type="submit">
-                Test Checkout
+                {liveCheckoutMode ? "Checkout" : "Test Checkout"}
               </button>
-              <p className="form-note">Stripe test mode only. Server records decide allocation.</p>
+              <p className="form-note">
+                {liveCheckoutMode
+                  ? "Stripe checkout opens next. Server records decide allocation."
+                  : "Stripe test mode only. Server records decide allocation."}
+              </p>
             </form>
           ) : (
             <span className="button" aria-disabled="true">

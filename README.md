@@ -8,6 +8,7 @@ This repository contains the public brand constitution, launch runbook, product 
 
 - Brand spec: `docs/AUTONOMOUS_ORGANIZATION_BRAND_SPEC.md`
 - Launch runbook: `docs/OPERATOR_RUNBOOK.md`
+- Production launch package: `docs/LOCAL_001_PRODUCTION_LAUNCH_PACKAGE.md`
 - Local No. 001 record: `source/locals/001/LOCAL_RECORD.md`
 
 ## Private Documents
@@ -26,7 +27,7 @@ Never commit:
 
 ## Current Gate
 
-Gate 2 is complete. Gate 3 is in progress: live checkout rehearsal preparation. Printify fulfillment is wired in controlled mode and remains disabled until explicit operator approval flips `PRINTIFY_ENABLED=true`.
+Gate 3 is complete per operator report. Gate 4 is in progress: production launch package and final public launch approval. Checkout and Printify fulfillment remain disabled until `AO-APPROVAL-0007`.
 
 ## Local Development
 
@@ -44,6 +45,7 @@ npm run typecheck
 npm run test:inventory
 npm run test:checkout
 npm run test:printify
+npm run launch:preflight
 ```
 
 ## Local Postgres
@@ -109,3 +111,17 @@ PRINTIFY_ENABLED=true
 ```
 
 When enabled, the webhook creates a Printify draft order for the approved Local No. 001 product and variant mapping. It does not call Printify's `send_to_production` endpoint.
+
+## Launch Preflight
+
+Locked mode verifies that public checkout and Printify are closed:
+
+```bash
+npm run launch:preflight
+```
+
+Launch mode is only for the approved public launch window:
+
+```bash
+npm run launch:preflight -- --mode=launch
+```

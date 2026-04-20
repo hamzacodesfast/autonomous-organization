@@ -96,3 +96,24 @@ Operational effect:
 - Gate 2 shipping profile and tax behavior confirmation is complete.
 - Local No. 001 may proceed to live checkout rehearsal preparation.
 - `PRINTIFY_ENABLED` remains false until live fulfillment is separately approved for the rehearsal purchase.
+
+## AO-APPROVAL-0006
+
+- Date: 2026-04-20
+- Channel: Codex operator chat
+- Approver: `hamzacodesfast`
+- Scope: prepare Local No. 001 production launch package
+- Local number: `001`
+- Decision: approved
+
+Approved instruction:
+
+```text
+approved: prepare production launch package
+```
+
+Operational effect:
+
+- Codex may prepare launch checklists, preflight tooling, and production-readiness documentation.
+- Checkout and Printify fulfillment remain disabled until a final public launch window approval.
+- Token work remains frozen.

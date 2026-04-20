@@ -109,12 +109,11 @@ Blocked locally:
 
 ## Gate 3 — Live Checkout Rehearsal
 
-Status: in progress
+Status: complete per operator report
 
 Next build target:
 
-- run live checkout rehearsal with one real purchase after explicit operator approval
-- verify paid allocation, no oversell, webhook idempotency, and fulfillment control
+- production launch package and final public launch approval
 
 Completed:
 
@@ -126,3 +125,23 @@ Completed:
 Blocked locally:
 
 - production launch remains blocked until operator approves public launch window and production deployment settings
+
+## Gate 4 — Production Launch Package
+
+Status: in progress
+
+Next build target:
+
+- run locked launch preflight
+- receive `AO-APPROVAL-0007` public launch window approval
+- run production launch preflight in deployed environment
+
+Completed:
+
+- production launch package preparation approved: `AO-APPROVAL-0006`
+- production launch package document drafted
+- launch preflight script added
+
+Blocked locally:
+
+- final public launch window is not approved
