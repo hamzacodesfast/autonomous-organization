@@ -1,6 +1,6 @@
 # Gate Status
 
-Last updated: 2026-04-19
+Last updated: 2026-04-20
 
 ## Gate 0 — Legal And Account Shell
 
@@ -40,8 +40,7 @@ Status: in progress
 
 Next build target:
 
-- rotate Discord webhooks that previously appeared in `.env.example`
-- database migration against local Postgres after Docker is installed
+- confirm Discord webhooks that previously appeared in `.env.example` have been rotated
 - Stripe test-mode checkout
 - Printify draft fulfillment mapping
 - policy text human approval
@@ -51,6 +50,10 @@ Completed:
 - local Postgres Docker Compose file added
 - local database prerequisite check added
 - initial Prisma migration generated
+- local Postgres started through Docker Compose
+- initial Prisma migration applied against local Postgres
+- Local No. 001 seeded into local Postgres
+- database-backed Local/dashboard reads verified with `ENABLE_DATABASE_READS=true`
 - static website pages scaffolded
 - Local No. 001 public page scaffolded
 - public dashboard shell scaffolded
@@ -62,5 +65,4 @@ Completed:
 
 Blocked locally:
 
-- Docker is not installed on this workstation, so `npm run db:up`, `npm run db:migrate`, and `npm run seed` have not been executed against a live Postgres instance.
-- Passwordless `sudo` is not available, so Codex cannot install Docker on this workstation.
+- none
