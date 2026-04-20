@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { ProductMockup } from "@/app/components/product-mockup";
 import { local001 } from "@/lib/local-001";
 
 export default function Local001Page() {
@@ -26,19 +26,14 @@ export default function Local001Page() {
       </section>
 
       <section className="section mockup-grid" aria-label="Product mockups">
-        <Image
-          className="mockup"
+        <ProductMockup
           src={local001.backMockup}
-          width={2048}
-          height={2048}
-          alt="Back mockup of Local No. 001 black tee"
+          alt="Back mockup of Local No. 001 black tee with primary mark"
+          mark
           priority
         />
-        <Image
-          className="mockup"
+        <ProductMockup
           src={local001.frontMockup}
-          width={2048}
-          height={2048}
           alt="Front mockup of Local No. 001 black tee"
           priority
         />

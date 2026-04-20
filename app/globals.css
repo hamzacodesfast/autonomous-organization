@@ -150,9 +150,36 @@ p {
   gap: 16px;
 }
 
-.mockup {
+.mockup-frame {
+  position: relative;
+  margin: 0;
   border: 1px solid var(--line);
   background: #ffffff;
+}
+
+.mockup {
+  width: 100%;
+  height: auto;
+}
+
+.mockup-print {
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  display: flex;
+  width: 30%;
+  min-width: 120px;
+  max-width: 190px;
+  flex-direction: column;
+  transform: translateX(-50%);
+  color: var(--paper);
+  font-family: Inter, Arial, Helvetica, sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 0.9;
+  text-align: left;
+  text-transform: uppercase;
 }
 
 .product-copy {
