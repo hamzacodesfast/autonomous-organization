@@ -37,6 +37,7 @@ TOKEN_WORK_FROZEN=true
 Public launch remains blocked until all are true:
 
 - production deployment target is selected and reachable over HTTPS
+- Hetzner SSH access works through the `ao_deploy` user
 - live Stripe webhook endpoint is configured for the production URL
 - production `STRIPE_WEBHOOK_SECRET` matches the production endpoint
 - production env passes `npm run launch:preflight -- --mode=launch`
@@ -143,19 +144,20 @@ Warnings must be read aloud by the operator before continuing.
 
 ## Public Launch Steps
 
-1. Confirm `.env` or production secret store is in launch-window state.
-2. Apply migrations to production.
-3. Apply the production database switch.
-4. Run launch preflight in production environment.
-5. Deploy the current `main`.
-6. Open `/locals/001`.
-7. Confirm button text says `Checkout`, not `Test Checkout`.
-8. Place exactly one operator smoke purchase only if the launch window requires it.
-9. Monitor Stripe webhooks for `checkout.session.completed`.
-10. Monitor Postgres for paid allocation and no oversell.
-11. Monitor Printify for draft order creation.
-12. Keep `send_to_production` manual unless a later approval wires automatic production submission.
-13. Publish public/social launch copy only after checkout and fulfillment records look correct.
+1. Complete `docs/HETZNER_VPS_SETUP.md`.
+2. Confirm `.env` or production secret store is in launch-window state.
+3. Apply migrations to production.
+4. Apply the production database switch.
+5. Run launch preflight in production environment.
+6. Deploy the current `main`.
+7. Open `/locals/001`.
+8. Confirm button text says `Checkout`, not `Test Checkout`.
+9. Place exactly one operator smoke purchase only if the launch window requires it.
+10. Monitor Stripe webhooks for `checkout.session.completed`.
+11. Monitor Postgres for paid allocation and no oversell.
+12. Monitor Printify for draft order creation.
+13. Keep `send_to_production` manual unless a later approval wires automatic production submission.
+14. Publish public/social launch copy only after checkout and fulfillment records look correct.
 
 ## Rollback
 
@@ -212,3 +214,4 @@ Date: 2026-04-20
 - Stripe webhook configuration and best practices: https://docs.stripe.com/webhooks/configure
 - Stripe Checkout Sessions API: https://docs.stripe.com/api/checkout/sessions
 - Printify order API: https://developers.printify.com/API-Doc-RREdits.html
+- Hetzner VPS setup: `docs/HETZNER_VPS_SETUP.md`

@@ -9,6 +9,7 @@ This repository contains the public brand constitution, launch runbook, product 
 - Brand spec: `docs/AUTONOMOUS_ORGANIZATION_BRAND_SPEC.md`
 - Launch runbook: `docs/OPERATOR_RUNBOOK.md`
 - Production launch package: `docs/LOCAL_001_PRODUCTION_LAUNCH_PACKAGE.md`
+- Hetzner VPS setup: `docs/HETZNER_VPS_SETUP.md`
 - Local No. 001 record: `source/locals/001/LOCAL_RECORD.md`
 
 ## Private Documents

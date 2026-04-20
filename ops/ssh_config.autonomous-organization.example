@@ -1,0 +1,7 @@
+Host ao-production
+  HostName YOUR_HETZNER_SERVER_IP
+  User ao_deploy
+  IdentityFile ~/.ssh/ao_hetzner_ed25519
+  IdentitiesOnly yes
+  ServerAliveInterval 30
+  ServerAliveCountMax 3

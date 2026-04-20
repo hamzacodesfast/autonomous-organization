@@ -1,0 +1,207 @@
+# Hetzner VPS Setup
+
+Date: 2026-04-20
+Platform: Hetzner Cloud VPS
+Purpose: Autonomous Organization production compute
+
+## Position
+
+Hetzner VPS is the approved production compute surface in the brand spec. This document replaces generic deployment assumptions for Local No. 001.
+
+Do not put private keys, live secrets, webhook URLs, or database passwords in Git.
+
+## Local Inputs
+
+The local `.env` fields are:
+
+```bash
+HETZNER_SERVER_IP=203.0.113.10
+SSH_DEPLOY_USER=ao_deploy
+```
+
+`203.0.113.10` is a documentation placeholder. Replace it with the real IPv4 address from the Hetzner server details page before testing SSH.
+
+## SSH Key
+
+Use a dedicated production SSH key instead of reusing personal/default keys:
+
+```bash
+ssh-keygen -t ed25519 -a 100 -f ~/.ssh/ao_hetzner_ed25519 -C "ao-hetzner-production-2026-04-20"
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/ao_hetzner_ed25519
+chmod 644 ~/.ssh/ao_hetzner_ed25519.pub
+```
+
+Print the public key:
+
+```bash
+cat ~/.ssh/ao_hetzner_ed25519.pub
+```
+
+Copy only the `.pub` output into Hetzner Cloud. Never copy or paste the private key.
+
+## Hetzner Console
+
+In Hetzner Cloud Console:
+
+1. Open the Autonomous Organization project.
+2. Go to `Security` or `SSH Keys`.
+3. Add the public key from `~/.ssh/ao_hetzner_ed25519.pub`.
+4. Name it `ao-hetzner-production-2026-04-20`.
+5. Create a firewall named `ao-production-firewall`.
+6. Add inbound rules:
+   - TCP `22` from your current IP only while provisioning
+   - TCP `80` from `0.0.0.0/0` and `::/0`
+   - TCP `443` from `0.0.0.0/0` and `::/0`
+7. Leave outbound unrestricted unless a later hardening pass adds explicit egress rules.
+8. Create a server:
+   - Image: Ubuntu 24.04 LTS
+   - Type: start with CX22 or better
+   - SSH key: `ao-hetzner-production-2026-04-20`
+   - Firewall: `ao-production-firewall`
+   - Name: `ao-production-001`
+9. Copy the server IPv4 address into `.env` as `HETZNER_SERVER_IP`.
+
+Hetzner adds selected SSH keys during server creation. If a key is added only after the server already exists, it must be added to `authorized_keys` manually.
+
+## Local SSH Config
+
+Add this to `~/.ssh/config`, replacing the host name with the real server IP or domain:
+
+```sshconfig
+Host ao-production
+  HostName 203.0.113.10
+  User root
+  IdentityFile ~/.ssh/ao_hetzner_ed25519
+  IdentitiesOnly yes
+  ServerAliveInterval 30
+  ServerAliveCountMax 3
+```
+
+Secure the config:
+
+```bash
+chmod 600 ~/.ssh/config
+```
+
+First connection:
+
+```bash
+ssh ao-production
+```
+
+Read the host fingerprint prompt. If the host key changes unexpectedly later, stop and investigate before accepting it.
+
+## First Server Hardening
+
+Run as `root` on the fresh server:
+
+```bash
+apt update
+apt upgrade -y
+apt install -y ufw fail2ban git curl ca-certificates gnupg unattended-upgrades
+adduser --disabled-password --gecos "" ao_deploy
+usermod -aG sudo ao_deploy
+install -d -m 700 -o ao_deploy -g ao_deploy /home/ao_deploy/.ssh
+cp /root/.ssh/authorized_keys /home/ao_deploy/.ssh/authorized_keys
+chown ao_deploy:ao_deploy /home/ao_deploy/.ssh/authorized_keys
+chmod 600 /home/ao_deploy/.ssh/authorized_keys
+```
+
+Keep the root SSH session open. In a second local terminal, test deploy-user SSH:
+
+```bash
+ssh -i ~/.ssh/ao_hetzner_ed25519 ao_deploy@YOUR_SERVER_IP
+```
+
+Only after `ao_deploy` login works, harden SSH:
+
+```bash
+cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak
+printf '%s\n' \
+  'PermitRootLogin prohibit-password' \
+  'PasswordAuthentication no' \
+  'KbdInteractiveAuthentication no' \
+  'PubkeyAuthentication yes' \
+  'X11Forwarding no' \
+  'AllowUsers ao_deploy root' \
+  > /etc/ssh/sshd_config.d/99-ao-hardening.conf
+sshd -t
+systemctl reload ssh
+```
+
+Configure host firewall:
+
+```bash
+ufw default deny incoming
+ufw default allow outgoing
+ufw allow OpenSSH
+ufw allow 80/tcp
+ufw allow 443/tcp
+ufw --force enable
+ufw status verbose
+```
+
+## Local SSH Config After Deploy User
+
+After `ao_deploy` works, update `~/.ssh/config`:
+
+```sshconfig
+Host ao-production
+  HostName YOUR_SERVER_IP
+  User ao_deploy
+  IdentityFile ~/.ssh/ao_hetzner_ed25519
+  IdentitiesOnly yes
+  ServerAliveInterval 30
+  ServerAliveCountMax 3
+```
+
+Test:
+
+```bash
+ssh ao-production 'whoami && hostname && uptime'
+```
+
+Expected user:
+
+```text
+ao_deploy
+```
+
+## Production App Stack
+
+Recommended first production stack on the VPS:
+
+- Ubuntu 24.04 LTS
+- Docker Engine and Docker Compose plugin
+- Caddy for HTTPS reverse proxy
+- Postgres in Docker volume or a separate managed database
+- Next.js app as a Docker service
+- systemd only for Docker/Caddy service supervision
+
+Do not open checkout until:
+
+```bash
+npm run launch:preflight -- --mode=launch
+```
+
+passes on the VPS or against the production environment.
+
+## Immediate Next Checklist
+
+1. Create or confirm `~/.ssh/ao_hetzner_ed25519`.
+2. Add `~/.ssh/ao_hetzner_ed25519.pub` to Hetzner.
+3. Create the firewall.
+4. Create the VPS with the SSH key selected during server creation.
+5. Replace `HETZNER_SERVER_IP` with the real IPv4.
+6. Add the `ao-production` SSH config.
+7. SSH as root.
+8. Create `ao_deploy`.
+9. Test `ao_deploy`.
+10. Harden SSH and firewall.
+
+## References
+
+- Hetzner firewall docs: https://docs.hetzner.com/cloud/firewalls/getting-started/creating-a-firewall/
+- Hetzner server SSH-key FAQ: https://docs.hetzner.com/cloud/servers/faq/
+- Hetzner SSH docs: https://docs.hetzner.com/robot/dedicated-server/security/ssh/
