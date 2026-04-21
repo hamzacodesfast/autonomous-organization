@@ -20,6 +20,8 @@
     "test:checkout": "node scripts/db-test-checkout.mjs",
     "test:printify": "node scripts/db-test-printify.mjs",
     "launch:preflight": "node scripts/launch-preflight.mjs",
+    "hermes:heartbeat": "node scripts/hermes-heartbeat.mjs",
+    "hermes:status": "node scripts/hermes-status.mjs",
     "export:social": "node scripts/export-social-assets.mjs",
     "export:print": "node scripts/export-print-assets.mjs"
   },

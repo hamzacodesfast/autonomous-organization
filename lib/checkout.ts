@@ -11,6 +11,7 @@ import {
 } from "@prisma/client";
 import Stripe from "stripe";
 import { z } from "zod";
+import { HermesRuntimeError, runHermesJob } from "@/lib/hermes";
 import { prisma } from "@/lib/prisma";
 import { submitPrintifyDraftForCheckoutSession, type PrintifyFulfillmentAction } from "@/lib/printify";
 import { getStripe, getStripeWebhookSecret, stripeCheckoutEnabled } from "@/lib/stripe";
@@ -342,50 +343,75 @@ export async function createCheckoutSessionForLocal001(input: {
     throw new CheckoutError("Stripe test checkout is disabled.", 403, "checkout_disabled");
   }
 
-  const size = normalizeSize(input.size);
-  const stripe = getStripe();
-  const draft = await createDraftCheckout(size);
-  let session: Stripe.Checkout.Session | undefined;
-
   try {
-    session = await stripe.checkout.sessions.create(checkoutSessionParams({ ...draft, requestOrigin: input.requestOrigin }), {
-      idempotencyKey: `checkout-session:${draft.orderId}`,
-    });
+    const size = normalizeSize(input.size);
 
-    if (!session.url) {
-      throw new CheckoutError("Stripe did not return a checkout URL.", 502, "stripe_session_missing_url");
-    }
+    return await runHermesJob(
+      {
+        jobName: "checkout.local_001.create_session",
+        actionClass: "Class 2",
+        platform: "Stripe",
+        targetSurface: "checkout_session",
+        affectedObject: `Local-001 size ${size}`,
+        summarizeFailure: (error) =>
+          error instanceof Error ? `Checkout session halted: ${error.message}` : "Checkout session halted.",
+        summarizeSuccess: (result) => `Created Checkout Session ${result.sessionId} for Local No. 001 size ${size}.`,
+      },
+      async () => {
+        const stripe = getStripe();
+        const draft = await createDraftCheckout(size);
+        let session: Stripe.Checkout.Session | undefined;
 
-    await prisma.$transaction([
-      prisma.inventoryReservation.update({
-        where: { id: draft.reservationId },
-        data: { stripeSessionId: session.id },
-      }),
-      prisma.payment.create({
-        data: {
-          id: `pay_${randomUUID()}`,
-          orderId: draft.orderId,
-          status: PaymentStatus.PENDING,
-          stripeCheckoutSession: session.id,
-          stripePaymentIntent: asStripeId(session.payment_intent),
-          amountCents: draft.sku.local.retailPriceCents,
-          currency: draft.sku.local.currency,
-        },
-      }),
-    ]);
+        try {
+          session = await stripe.checkout.sessions.create(
+            checkoutSessionParams({ ...draft, requestOrigin: input.requestOrigin }),
+            {
+              idempotencyKey: `checkout-session:${draft.orderId}`,
+            },
+          );
 
-    return {
-      orderId: draft.orderId,
-      reservationId: draft.reservationId,
-      sessionId: session.id,
-      url: session.url,
-    };
+          if (!session.url) {
+            throw new CheckoutError("Stripe did not return a checkout URL.", 502, "stripe_session_missing_url");
+          }
+
+          await prisma.$transaction([
+            prisma.inventoryReservation.update({
+              where: { id: draft.reservationId },
+              data: { stripeSessionId: session.id },
+            }),
+            prisma.payment.create({
+              data: {
+                id: `pay_${randomUUID()}`,
+                orderId: draft.orderId,
+                status: PaymentStatus.PENDING,
+                stripeCheckoutSession: session.id,
+                stripePaymentIntent: asStripeId(session.payment_intent),
+                amountCents: draft.sku.local.retailPriceCents,
+                currency: draft.sku.local.currency,
+              },
+            }),
+          ]);
+
+          return {
+            orderId: draft.orderId,
+            reservationId: draft.reservationId,
+            sessionId: session.id,
+            url: session.url,
+          };
+        } catch (error) {
+          if (session?.id && session.status === "open") {
+            await stripe.checkout.sessions.expire(session.id).catch(() => undefined);
+          }
+
+          await cancelDraftCheckout(draft);
+          throw error;
+        }
+      },
+    );
   } catch (error) {
-    if (session?.id && session.status === "open") {
-      await stripe.checkout.sessions.expire(session.id).catch(() => undefined);
+    if (error instanceof HermesRuntimeError) {
+      throw new CheckoutError("Hermes runtime halted before payment.", error.status, error.code);
     }
-
-    await cancelDraftCheckout(draft);
     throw error;
   }
 }
@@ -542,79 +568,98 @@ export async function processStripeWebhook(rawBody: string, signature: string | 
   const event = stripe.webhooks.constructEvent(rawBody, signature, getStripeWebhookSecret());
   const payloadHash = hashPayload(rawBody);
 
-  for (let attempt = 0; attempt < 3; attempt += 1) {
-    try {
-      const result: StripeWebhookResult = await prisma.$transaction(
-        async (tx) => {
-          const existingEvent = await tx.webhookEvent.findUnique({
-            where: { id: event.id },
-          });
+  return runHermesJob(
+    {
+      jobName: "stripe.webhook.process",
+      actionClass: "Class 3",
+      platform: "Stripe",
+      targetSurface: "webhook",
+      requestId: event.id,
+      affectedObject: event.type,
+      allowWhenKillSwitchActive: true,
+      summarizeFailure: (error) =>
+        error instanceof Error ? `Stripe webhook ${event.type} failed: ${error.message}` : `Stripe webhook ${event.type} failed.`,
+      summarizeSuccess: (result) => {
+        const fulfillment = result.fulfillmentAction ? ` / fulfillment ${result.fulfillmentAction}` : "";
+        return `Stripe webhook ${result.eventType} ${result.action}${fulfillment}.`;
+      },
+    },
+    async () => {
+      for (let attempt = 0; attempt < 3; attempt += 1) {
+        try {
+          const result: StripeWebhookResult = await prisma.$transaction(
+            async (tx) => {
+              const existingEvent = await tx.webhookEvent.findUnique({
+                where: { id: event.id },
+              });
 
-          if (existingEvent) {
-            return { received: true, duplicate: true, eventType: event.type, action: "duplicate" };
-          }
+              if (existingEvent) {
+                return { received: true, duplicate: true, eventType: event.type, action: "duplicate" };
+              }
 
-          await tx.webhookEvent.create({
-            data: {
-              id: event.id,
-              platform: "stripe",
-              eventType: event.type,
-              payloadHash,
+              await tx.webhookEvent.create({
+                data: {
+                  id: event.id,
+                  platform: "stripe",
+                  eventType: event.type,
+                  payloadHash,
+                },
+              });
+
+              if (!isCheckoutSession(event.data.object)) {
+                return { received: true, duplicate: false, eventType: event.type, action: "ignored" };
+              }
+
+              if (event.type === "checkout.session.completed") {
+                if (event.data.object.payment_status === "paid") {
+                  const action = await markCheckoutSessionPaid(tx, event.data.object);
+                  return { received: true, duplicate: false, eventType: event.type, action };
+                }
+
+                return { received: true, duplicate: false, eventType: event.type, action: "awaiting_payment" };
+              }
+
+              if (event.type === "checkout.session.async_payment_succeeded") {
+                const action = await markCheckoutSessionPaid(tx, event.data.object);
+                return { received: true, duplicate: false, eventType: event.type, action };
+              }
+
+              if (event.type === "checkout.session.async_payment_failed") {
+                const action = await markCheckoutSessionFailed(tx, event.data.object, ReservationStatus.CANCELLED);
+                return { received: true, duplicate: false, eventType: event.type, action };
+              }
+
+              if (event.type === "checkout.session.expired") {
+                const action = await markCheckoutSessionFailed(tx, event.data.object, ReservationStatus.EXPIRED);
+                return { received: true, duplicate: false, eventType: event.type, action };
+              }
+
+              return { received: true, duplicate: false, eventType: event.type, action: "ignored" };
             },
-          });
+            { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },
+          );
 
-          if (!isCheckoutSession(event.data.object)) {
-            return { received: true, duplicate: false, eventType: event.type, action: "ignored" };
+          if (
+            !result.duplicate &&
+            result.action === "allocated" &&
+            isCheckoutSession(event.data.object) &&
+            (event.type === "checkout.session.completed" || event.type === "checkout.session.async_payment_succeeded")
+          ) {
+            const fulfillment = await submitPrintifyDraftForCheckoutSession(event.data.object);
+            return { ...result, fulfillmentAction: fulfillment.action };
           }
 
-          if (event.type === "checkout.session.completed") {
-            if (event.data.object.payment_status === "paid") {
-              const action = await markCheckoutSessionPaid(tx, event.data.object);
-              return { received: true, duplicate: false, eventType: event.type, action };
-            }
-
-            return { received: true, duplicate: false, eventType: event.type, action: "awaiting_payment" };
+          return result;
+        } catch (error) {
+          if (!isRetryableTransactionError(error) || attempt === 2) {
+            throw error;
           }
 
-          if (event.type === "checkout.session.async_payment_succeeded") {
-            const action = await markCheckoutSessionPaid(tx, event.data.object);
-            return { received: true, duplicate: false, eventType: event.type, action };
-          }
-
-          if (event.type === "checkout.session.async_payment_failed") {
-            const action = await markCheckoutSessionFailed(tx, event.data.object, ReservationStatus.CANCELLED);
-            return { received: true, duplicate: false, eventType: event.type, action };
-          }
-
-          if (event.type === "checkout.session.expired") {
-            const action = await markCheckoutSessionFailed(tx, event.data.object, ReservationStatus.EXPIRED);
-            return { received: true, duplicate: false, eventType: event.type, action };
-          }
-
-          return { received: true, duplicate: false, eventType: event.type, action: "ignored" };
-        },
-        { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },
-      );
-
-      if (
-        !result.duplicate &&
-        result.action === "allocated" &&
-        isCheckoutSession(event.data.object) &&
-        (event.type === "checkout.session.completed" || event.type === "checkout.session.async_payment_succeeded")
-      ) {
-        const fulfillment = await submitPrintifyDraftForCheckoutSession(event.data.object);
-        return { ...result, fulfillmentAction: fulfillment.action };
+          await sleep(50 * (attempt + 1));
+        }
       }
 
-      return result;
-    } catch (error) {
-      if (!isRetryableTransactionError(error) || attempt === 2) {
-        throw error;
-      }
-
-      await sleep(50 * (attempt + 1));
-    }
-  }
-
-  throw new Error("Stripe webhook transaction retry failed.");
+      throw new Error("Stripe webhook transaction retry failed.");
+    },
+  );
 }

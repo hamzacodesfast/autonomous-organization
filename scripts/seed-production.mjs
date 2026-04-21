@@ -79,7 +79,7 @@ async function main() {
       approver: "hamzacodesfast",
       decision: ApprovalDecision.APPROVED,
       scope: "Token work frozen until after commerce launch.",
-      specVersion: "v0.2",
+      specVersion: "v0.3",
       approvedAt: new Date("2026-04-19T23:30:00.000Z"),
       notes:
         "No token ownership, profit, governance, dividend, revenue-share, entitlement, price, or market language may be published.",
@@ -90,7 +90,7 @@ async function main() {
       approver: "hamzacodesfast",
       decision: ApprovalDecision.APPROVED,
       scope: "Token work frozen until after commerce launch.",
-      specVersion: "v0.2",
+      specVersion: "v0.3",
       approvedAt: new Date("2026-04-19T23:30:00.000Z"),
       notes:
         "No token ownership, profit, governance, dividend, revenue-share, entitlement, price, or market language may be published.",
@@ -142,6 +142,25 @@ async function main() {
       lastSanitizedAction: "2026-04-19T23:30:00Z token freeze approval recorded",
       uptime: "pre-launch",
       fulfilledThisMonth: 0,
+    },
+  });
+
+  await prisma.hermesRuntimeControl.upsert({
+    where: { id: "hermes-runtime-primary" },
+    update: {
+      runtimeEnabled: true,
+      killSwitchActive: false,
+      queueState: "idle",
+      heartbeatIntervalSeconds: 300,
+      lastError: null,
+    },
+    create: {
+      id: "hermes-runtime-primary",
+      runtimeEnabled: true,
+      killSwitchActive: false,
+      queueState: "idle",
+      heartbeatIntervalSeconds: 300,
+      lastError: null,
     },
   });
 }

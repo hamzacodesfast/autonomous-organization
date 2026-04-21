@@ -1,0 +1,11 @@
+[Unit]
+Description=Autonomous Organization Hermes heartbeat sync
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+User=ao_deploy
+WorkingDirectory=/srv/autonomous-organization/app
+ExecStart=/usr/bin/docker exec ao-app node scripts/hermes-heartbeat.mjs --queue=idle
+

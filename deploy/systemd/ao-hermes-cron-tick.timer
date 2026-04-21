@@ -1,0 +1,11 @@
+[Unit]
+Description=Run Autonomous Organization Hermes cron tick every minute
+
+[Timer]
+OnBootSec=3min
+OnUnitActiveSec=1min
+Unit=ao-hermes-cron-tick.service
+
+[Install]
+WantedBy=timers.target
+

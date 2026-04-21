@@ -1,0 +1,12 @@
+[Unit]
+Description=Autonomous Organization Hermes cron tick
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=ao_deploy
+Environment=HOME=/home/ao_deploy
+WorkingDirectory=/home/ao_deploy
+ExecStart=/home/ao_deploy/.local/bin/hermes -p ao-brand cron tick
+

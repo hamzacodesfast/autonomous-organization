@@ -60,6 +60,16 @@ function env(name) {
   return process.env[name]?.trim() ?? "";
 }
 
+function envFlag(name, fallback) {
+  const value = env(name);
+
+  if (!value) {
+    return fallback;
+  }
+
+  return value === "true";
+}
+
 function isPlaceholder(value) {
   return !value || value.startsWith("PLACEHOLDER_");
 }
@@ -154,9 +164,22 @@ function validateShared(mode) {
   validateShippingCountries();
   validatePublicUrl("APP_URL", mode);
   validatePublicUrl("PUBLIC_SITE_URL", mode);
+  validateHermes();
 
   if (env("TOKEN_WORK_FROZEN") !== "true") {
     fail("TOKEN_WORK_FROZEN must remain true until commerce launch is complete.");
+  }
+}
+
+function validateHermes() {
+  const interval = Number.parseInt(env("HERMES_HEARTBEAT_INTERVAL_SECONDS") || "300", 10);
+
+  if (!envFlag("HERMES_RUNTIME_ENABLED", true)) {
+    fail("HERMES_RUNTIME_ENABLED must be true.");
+  }
+
+  if (!Number.isFinite(interval) || interval < 30 || interval > 3600) {
+    fail("HERMES_HEARTBEAT_INTERVAL_SECONDS must be between 30 and 3600.");
   }
 }
 
@@ -221,7 +244,8 @@ async function validateDatabase(mode) {
   const prisma = new PrismaClient();
 
   try {
-    const local = await prisma.local.findUnique({
+    const [local, runtimeControl, tokenRegistryEntries] = await Promise.all([
+      prisma.local.findUnique({
       where: { localNumber: "001" },
       include: {
         skus: {
@@ -235,11 +259,55 @@ async function validateDatabase(mode) {
           },
         },
       },
-    });
+      }),
+      prisma.hermesRuntimeControl.findUnique({
+        where: { id: "hermes-runtime-primary" },
+      }),
+      prisma.tokenRegistryEntry.count(),
+    ]);
 
     if (!local) {
       fail("Local No. 001 is missing from the database.");
       return;
+    }
+
+    if (!runtimeControl) {
+      if (mode === "launch") {
+        fail("Hermes runtime control record is missing.");
+      } else {
+        warn("Hermes runtime control record is missing.");
+      }
+    } else {
+      if (!runtimeControl.runtimeEnabled) {
+        fail("Hermes runtime control record has runtimeEnabled=false.");
+      }
+
+      if (mode === "launch" && runtimeControl.killSwitchActive) {
+        fail("Hermes kill switch must be inactive in launch mode.");
+      }
+
+      if (!runtimeControl.lastHeartbeatAt) {
+        if (mode === "launch") {
+          fail("Hermes heartbeat has never been recorded.");
+        } else {
+          warn("Hermes heartbeat has never been recorded.");
+        }
+      } else {
+        const ageMs = Date.now() - runtimeControl.lastHeartbeatAt.getTime();
+        const thresholdMs = runtimeControl.heartbeatIntervalSeconds * 2000;
+
+        if (ageMs > thresholdMs) {
+          if (mode === "launch") {
+            fail("Hermes heartbeat is stale.");
+          } else {
+            warn("Hermes heartbeat is stale.");
+          }
+        }
+      }
+    }
+
+    if (tokenRegistryEntries === 0) {
+      warn("Token registry metadata is empty.");
     }
 
     if (local.editionCount !== 100) {
@@ -301,6 +369,7 @@ async function validateDatabase(mode) {
 function printResults(mode) {
   console.log(`Launch preflight mode: ${mode}`);
   console.log(`Stripe secret key kind: ${keyKind(env("STRIPE_SECRET_KEY"))}`);
+  console.log(`Hermes enabled: ${envFlag("HERMES_RUNTIME_ENABLED", true) ? "true" : "false"}`);
   console.log(`Checkout enabled: ${env("STRIPE_CHECKOUT_ENABLED") || "unset"}`);
   console.log(`Printify enabled: ${env("PRINTIFY_ENABLED") || "unset"}`);
 

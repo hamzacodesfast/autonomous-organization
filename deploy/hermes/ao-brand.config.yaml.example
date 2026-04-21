@@ -1,0 +1,12 @@
+model:
+  provider: custom
+  default: gpt-5.4-mini
+  base_url: ${OPENAI_BASE_URL}
+
+terminal:
+  backend: local
+  cwd: /srv/autonomous-organization/app
+
+agent:
+  max_turns: 60
+

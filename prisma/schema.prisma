@@ -64,6 +64,21 @@ enum ActionState {
   ROLLBACK
 }
 
+enum ActionLogPhase {
+  BEFORE
+  AFTER
+}
+
+enum HermesJobStatus {
+  QUEUED
+  RUNNING
+  SUCCESS
+  FAILURE
+  BLOCKED
+  ROLLBACK
+  CANCELLED
+}
+
 model Local {
   id                 Int       @id @default(autoincrement())
   localNumber        String    @unique
@@ -88,6 +103,7 @@ model Local {
   assets      Asset[]
   approvals   Approval[]
   actionLogs  ActionLog[]
+  hermesJobRuns HermesJobRun[]
   orderItems  OrderItem[]
 }
 
@@ -201,7 +217,9 @@ model Approval {
 model ActionLog {
   id             String      @id
   localId        Int?
+  jobRunId       String?
   timestamp      DateTime
+  phase          ActionLogPhase @default(AFTER)
   agentName      String
   actionClass    String
   requestId      String
@@ -212,7 +230,11 @@ model ActionLog {
   state          ActionState
   summary        String
 
-  local Local? @relation(fields: [localId], references: [id])
+  local  Local?         @relation(fields: [localId], references: [id])
+  jobRun HermesJobRun?  @relation(fields: [jobRunId], references: [id], onDelete: SetNull)
+
+  @@index([jobRunId])
+  @@index([requestId, phase])
 }
 
 model Asset {
@@ -246,6 +268,65 @@ model DashboardSnapshot {
   uptime              String
   fulfilledThisMonth  Int
   createdAt           DateTime @default(now())
+}
+
+model HermesRuntimeControl {
+  id                       String   @id
+  runtimeEnabled           Boolean  @default(true)
+  killSwitchActive         Boolean  @default(false)
+  queueState               String   @default("idle")
+  lastHeartbeatAt          DateTime?
+  heartbeatIntervalSeconds Int      @default(300)
+  lastError                String?
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime @updatedAt
+}
+
+model HermesJobRun {
+  id             String          @id
+  localId        Int?
+  jobName        String
+  agentName      String
+  actionClass    String
+  targetSurface  String
+  platform       String
+  requestId      String
+  approvalId     String?
+  affectedObject String?
+  publicUrl      String?
+  status         HermesJobStatus @default(QUEUED)
+  retryBudget    Int             @default(0)
+  retryCount     Int             @default(0)
+  requestedAt    DateTime        @default(now())
+  startedAt      DateTime?
+  finishedAt     DateTime?
+  summary        String?
+  errorMessage   String?
+
+  local      Local?      @relation(fields: [localId], references: [id])
+  actionLogs ActionLog[]
+
+  @@index([status, requestedAt])
+  @@index([jobName, requestedAt])
+  @@index([requestId])
+}
+
+model TokenRegistryEntry {
+  id                String   @id
+  platform          String
+  environment       String
+  ownerAccount      String
+  purpose           String
+  scopes            String[]
+  createdDate       DateTime
+  expirationDate    DateTime?
+  nextRotationDate  DateTime?
+  storageLocation   String
+  lastSuccessfulUse DateTime?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([platform, environment])
 }
 
 model WebhookEvent {
