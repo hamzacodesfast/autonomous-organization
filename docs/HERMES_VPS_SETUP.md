@@ -43,6 +43,8 @@ The script:
 4. creates `~/.hermes/profiles/ao-brand/.env` if missing
 5. installs and enables the heartbeat and cron-tick timers
 
+The bootstrap intentionally skips Hermes' interactive setup wizard. On production, the repo-owned profile files are authoritative. Do not run `ao-brand setup` unless you are intentionally reconfiguring the profile and understand the drift you are introducing.
+
 ## Required secret after install
 
 The install is not complete until this file contains a real key:
@@ -62,9 +64,8 @@ OPENAI_API_KEY=sk-...
 
 ```bash
 ssh ao-production
-source ~/.bashrc
-hermes -p ao-brand profile
-hermes -p ao-brand status --all
+/home/ao_deploy/.local/bin/hermes -p ao-brand profile
+/home/ao_deploy/.local/bin/hermes -p ao-brand status --all
 systemctl status ao-hermes-heartbeat.timer
 systemctl status ao-hermes-cron-tick.timer
 docker exec ao-app node scripts/hermes-status.mjs
