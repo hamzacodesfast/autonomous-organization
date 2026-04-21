@@ -314,6 +314,12 @@ p {
   font-size: 14px;
 }
 
+.footer-links {
+  display: grid;
+  gap: 10px;
+  justify-items: end;
+}
+
 @media (max-width: 760px) {
   .site-header,
   .site-footer,
@@ -335,5 +341,9 @@ p {
 
   .size-grid {
     grid-template-columns: repeat(2, minmax(48px, 1fr));
+  }
+
+  .footer-links {
+    justify-items: start;
   }
 }

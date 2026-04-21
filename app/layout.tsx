@@ -45,11 +45,61 @@ const footerItems = [
   { href: "/terms", label: "Terms" },
 ];
 
+function configuredValue(value: string | undefined) {
+  if (!value) {
+    return null;
+  }
+
+  const trimmed = value.trim();
+
+  if (!trimmed || trimmed.startsWith("PLACEHOLDER_")) {
+    return null;
+  }
+
+  return trimmed;
+}
+
+function socialItems() {
+  const xAccountId = configuredValue(process.env.X_ACCOUNT_ID);
+  const instagramAccountId = configuredValue(process.env.INSTAGRAM_ACCOUNT_ID);
+  const tiktokAccountId = configuredValue(process.env.TIKTOK_ACCOUNT_ID);
+  const pumpfunProfileUrl = configuredValue(process.env.PUMPFUN_PROFILE_URL);
+
+  return [
+    xAccountId
+      ? {
+          href: `https://x.com/${xAccountId.replace(/^@/, "")}`,
+          label: "X",
+        }
+      : null,
+    instagramAccountId
+      ? {
+          href: `https://www.instagram.com/${instagramAccountId.replace(/^@/, "")}`,
+          label: "Instagram",
+        }
+      : null,
+    tiktokAccountId
+      ? {
+          href: `https://www.tiktok.com/@${tiktokAccountId.replace(/^@/, "")}`,
+          label: "TikTok",
+        }
+      : null,
+    pumpfunProfileUrl
+      ? {
+          href: pumpfunProfileUrl,
+          label: "Pump.fun",
+        }
+      : null,
+  ].filter((item): item is { href: string; label: string } => Boolean(item));
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const socialNavItems = socialItems();
+
   return (
     <html lang="en">
       <body>
@@ -70,13 +120,24 @@ export default function RootLayout({
         <main>{children}</main>
         <footer className="site-footer">
           <p>The Organization maintains its members. The members maintain the Organization.</p>
-          <nav aria-label="Policy navigation">
-            {footerItems.map((item) => (
-              <Link key={item.href} href={item.href}>
-                {item.label}
-              </Link>
-            ))}
-          </nav>
+          <div className="footer-links">
+            <nav aria-label="Policy navigation">
+              {footerItems.map((item) => (
+                <Link key={item.href} href={item.href}>
+                  {item.label}
+                </Link>
+              ))}
+            </nav>
+            {socialNavItems.length > 0 ? (
+              <nav aria-label="Social navigation">
+                {socialNavItems.map((item) => (
+                  <a key={item.href} href={item.href} target="_blank" rel="noreferrer">
+                    {item.label}
+                  </a>
+                ))}
+              </nav>
+            ) : null}
+          </div>
         </footer>
       </body>
     </html>
