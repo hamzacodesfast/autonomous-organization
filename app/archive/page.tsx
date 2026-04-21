@@ -1,7 +1,11 @@
 import Link from "next/link";
-import { local001 } from "@/lib/local-001";
+import { getCurrentLocal } from "@/lib/locals-repository";
 
-export default function ArchivePage() {
+export const dynamic = "force-dynamic";
+
+export default async function ArchivePage() {
+  const local001 = await getCurrentLocal();
+
   return (
     <section className="section">
       <p className="eyebrow">Archive</p>
