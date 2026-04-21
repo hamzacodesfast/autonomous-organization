@@ -8,6 +8,23 @@ Local: `001`
 
 This package records the approved public launch window and the remaining production controls.
 
+## Addendum — 2026-04-21
+
+The 2026-04-20 production window was used as a controlled production rehearsal, not the official public launch.
+
+Recorded outcome:
+
+- no public commerce activity was recorded
+- no paid orders were recorded in production Postgres
+- no Printify draft submissions were recorded
+- production endpoints, DNS, HTTPS, checkout gating, and webhook intake were validated
+- the site was returned to a locked state after the rehearsal
+
+Official launch remains pending:
+
+- tweaks and additions to `docs/AUTONOMOUS_ORGANIZATION_BRAND_SPEC_v0.2.md`
+- a later operator approval to reopen production launch mode
+
 Current approvals on record:
 
 - `AO-APPROVAL-0001` — token work frozen until after commerce launch
@@ -21,7 +38,7 @@ Current approvals on record:
 
 Local No. 001 has a production asset, Printify product mapping, policy pages, Stripe Checkout flow, signed webhook allocation, duplicate webhook protection, and controlled Printify draft submission.
 
-The live checkout rehearsal was reported complete by the operator. Independent Stripe/Postgres/Printify verification was intentionally skipped at operator request and recorded that way in `ops/GATE_STATUS.md`.
+The 2026-04-20 production window is now recorded as a controlled rehearsal only. The system is currently in a locked post-rehearsal state, and official launch remains blocked pending brand spec updates and later approval.
 
 Default safe state:
 
@@ -36,13 +53,14 @@ TOKEN_WORK_FROZEN=true
 
 Public launch remains blocked until all are true:
 
+- brand spec updates requested by the operator are completed and approved
 - production deployment target is selected and reachable over HTTPS
 - Hetzner SSH access works through the `ao_deploy` user
 - live Stripe webhook endpoint is configured for the production URL
 - production `STRIPE_WEBHOOK_SECRET` matches the production endpoint
 - production env passes `npm run launch:preflight -- --mode=launch`
-- Local No. 001 database state is `LIVE`
-- public dashboard status is updated to live or launch-window language
+- Local No. 001 database state is switched from `SCHEDULED` to `LIVE`
+- public dashboard status is updated from rehearsal language to official launch language
 - operator confirms tax/accounting handling remains accepted for launch
 - operator confirms support inbox is actively monitored
 
@@ -112,6 +130,21 @@ WHERE "id" = 'dashboard-prelaunch-001';
 ```
 
 Do not run this against the local test database and mistake that for production.
+
+After a controlled rehearsal closes without an official launch, return production to prelaunch-ready state:
+
+```sql
+UPDATE "Local"
+SET "state" = 'SCHEDULED',
+    "launchTimestamp" = NULL
+WHERE "localNumber" = '001';
+
+UPDATE "DashboardSnapshot"
+SET "localStatus" = 'scheduled',
+    "uptime" = 'rehearsal complete',
+    "lastSanitizedAction" = 'Controlled production rehearsal closed; official launch pending brand spec updates'
+WHERE "id" = 'dashboard-prelaunch-001';
+```
 
 ## Launch Preflight
 
@@ -203,6 +236,8 @@ Within 72 hours:
 - record orders paid, orders submitted, and fulfillment exceptions
 - prepare postmortem from `docs/POSTMORTEM_TEMPLATE.md`
 - keep token work frozen until commerce launch is explicitly closed by a later approval
+
+If the window was only a controlled rehearsal, explicitly record that there was no official launch and keep Local No. 001 in a prelaunch-ready state until a later approval reopens production.
 
 ## Recorded Final Launch Approval
 

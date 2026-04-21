@@ -1,6 +1,6 @@
 # Gate Status
 
-Last updated: 2026-04-20
+Last updated: 2026-04-21
 
 ## Gate 0 — Legal And Account Shell
 
@@ -128,12 +128,13 @@ Blocked locally:
 
 ## Gate 4 — Production Launch Package
 
-Status: launch mode closed; post-launch reconciliation pending
+Status: controlled production rehearsal complete; official launch pending brand spec updates
 
 Next build target:
 
-- reconcile Stripe, Postgres, and Printify counts
-- record fulfillment exceptions and postmortem notes
+- update `docs/AUTONOMOUS_ORGANIZATION_BRAND_SPEC_v0.2.md`
+- request a later explicit approval before reopening production launch mode
+- reconcile rehearsal notes into the postmortem record
 
 Completed:
 
@@ -190,10 +191,19 @@ Completed:
 - public Local No. 001 page re-verified with `Checkout Disabled`
 - checkout session route re-verified redirecting to `checkout_disabled`
 - public dashboard updated to:
-  - `localStatus=live`
-  - `uptime=post-launch`
-  - `lastSanitizedAction=Local No. 001 launch window closed; checkout disabled`
+  - `localStatus=scheduled`
+  - `uptime=rehearsal complete`
+  - `lastSanitizedAction=Controlled production rehearsal closed; official launch pending brand spec updates`
+- production database reset from `LIVE` to `SCHEDULED`
+- production counts at close:
+  - active reservations: `0`
+  - draft orders: `0`
+  - paid orders: `0`
+  - fulfillment rows: `0`
+  - Stripe webhook probe events: `1`
+- no public commerce activity recorded during the controlled production rehearsal
 
 Blocked locally:
 
-- none
+- `docs/AUTONOMOUS_ORGANIZATION_BRAND_SPEC_v0.2.md` still needs operator-requested tweaks and additions before official launch
+- a later explicit operator approval is required before reopening production launch mode

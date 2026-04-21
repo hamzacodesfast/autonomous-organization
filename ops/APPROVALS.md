@@ -141,3 +141,4 @@ Operational effect:
 - Printify `send_to_production` remains manual.
 - Token work remains frozen.
 - Production launch still requires production environment preflight and deployment-state confirmation before public promotion.
+- The 2026-04-20 window was later treated as a controlled production rehearsal and closed without public commerce activity. Official launch remains pending brand spec updates and a later operator approval.

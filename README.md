@@ -28,7 +28,7 @@ Never commit:
 
 ## Current Gate
 
-Gate 4 is active. `AO-APPROVAL-0007` approved the public launch window; production launch still requires deployed-environment preflight before checkout is opened publicly.
+Gate 4 remains in prelaunch readiness. `AO-APPROVAL-0007` was exercised as a controlled production rehearsal, then closed cleanly. Official launch remains pending brand spec updates and a later operator approval.
 
 ## Local Development
 
@@ -122,7 +122,7 @@ Locked mode verifies that public checkout and Printify are closed:
 npm run launch:preflight
 ```
 
-Launch mode is only for the approved public launch window:
+Launch mode is only for an explicitly approved production rehearsal or public launch window:
 
 ```bash
 npm run launch:preflight -- --mode=launch
