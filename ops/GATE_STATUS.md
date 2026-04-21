@@ -128,12 +128,12 @@ Blocked locally:
 
 ## Gate 4 — Production Launch Package
 
-Status: production stack installed; public ingress and production preflight pending
+Status: launch mode open
 
 Next build target:
 
-- run production launch preflight in launch mode
-- open public checkout only after production preflight passes
+- monitor live checkout, webhook intake, and Printify draft submissions
+- close launch mode when the public window ends
 
 Completed:
 
@@ -171,11 +171,18 @@ Completed:
 - production Stripe webhook signing secret synced to Hetzner
 - production webhook route reached over public HTTPS
 - live webhook processing correctly blocked while `STRIPE_TEST_MODE_ONLY=true`
+- production launch fuses opened on Hetzner:
+  - `STRIPE_CHECKOUT_ENABLED=true`
+  - `STRIPE_TEST_MODE_ONLY=false`
+  - `PRINTIFY_ENABLED=true`
+- Local No. 001 switched to `LIVE` in production Postgres
+- launch-mode preflight passed on Hetzner
+- launch-mode preflight warnings recorded:
+  - `STRIPE_REQUIRE_TERMS_CONSENT` is still not `true`
+  - `STRIPE_AUTOMATIC_TAX_ENABLED` is still not `true`
+- public Local No. 001 page verified with live `Checkout` label
+- production webhook accepted a signed probe event in live mode and returned `ignored`
 
 Blocked locally:
 
-- production launch preflight run in launch mode and currently blocked by:
-  - `STRIPE_CHECKOUT_ENABLED=false`
-  - `STRIPE_TEST_MODE_ONLY=true`
-  - `PRINTIFY_ENABLED=false`
-  - Local No. 001 database state is `HUMAN_APPROVAL`, not `LIVE`
+- none
