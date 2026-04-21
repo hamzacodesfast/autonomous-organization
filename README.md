@@ -28,7 +28,7 @@ Never commit:
 
 ## Current Gate
 
-Gate 4 remains in prelaunch readiness. `AO-APPROVAL-0007` was exercised as a controlled production rehearsal, then closed cleanly. Official launch remains pending brand spec updates and a later operator approval.
+Gate 4 remains in prelaunch readiness. `AO-APPROVAL-0007` was exercised as a controlled production rehearsal, then closed cleanly. Official launch remains pending Hermes runtime implementation and a later operator approval.
 
 ## Local Development
 

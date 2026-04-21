@@ -22,7 +22,7 @@ Recorded outcome:
 
 Official launch remains pending:
 
-- tweaks and additions to `docs/AUTONOMOUS_ORGANIZATION_BRAND_SPEC_v0.2.md`
+- implementation of the Hermes runtime controls defined in `docs/AUTONOMOUS_ORGANIZATION_BRAND_SPEC_v0.3.md`
 - a later operator approval to reopen production launch mode
 
 Current approvals on record:
@@ -38,7 +38,7 @@ Current approvals on record:
 
 Local No. 001 has a production asset, Printify product mapping, policy pages, Stripe Checkout flow, signed webhook allocation, duplicate webhook protection, and controlled Printify draft submission.
 
-The 2026-04-20 production window is now recorded as a controlled rehearsal only. The system is currently in a locked post-rehearsal state, and official launch remains blocked pending brand spec updates and later approval.
+The 2026-04-20 production window is now recorded as a controlled rehearsal only. The system is currently in a locked post-rehearsal state, and official launch remains blocked pending Hermes runtime implementation and later approval.
 
 Default safe state:
 
@@ -53,16 +53,16 @@ TOKEN_WORK_FROZEN=true
 
 Public launch remains blocked until all are true:
 
-- brand spec updates requested by the operator are completed and approved
-- production deployment target is selected and reachable over HTTPS
-- Hetzner SSH access works through the `ao_deploy` user
-- live Stripe webhook endpoint is configured for the production URL
-- production `STRIPE_WEBHOOK_SECRET` matches the production endpoint
+- Hermes scheduler, heartbeat, queue visibility, and operator kill switch are implemented and tested
+- at least one reversible Class 2 Hermes job, one blocked Class 3 Hermes job, and one rollback path are exercised with correct approval and action-log behavior
+- support inbox ingestion and escalation routing are tested
+- token registry metadata is current for production credentials in use
 - production env passes `npm run launch:preflight -- --mode=launch`
 - Local No. 001 database state is switched from `SCHEDULED` to `LIVE`
 - public dashboard status is updated from rehearsal language to official launch language
 - operator confirms tax/accounting handling remains accepted for launch
 - operator confirms support inbox is actively monitored
+- a later operator approval reopens production launch mode
 
 ## Local Locked Preflight
 
@@ -142,7 +142,7 @@ WHERE "localNumber" = '001';
 UPDATE "DashboardSnapshot"
 SET "localStatus" = 'scheduled',
     "uptime" = 'rehearsal complete',
-    "lastSanitizedAction" = 'Controlled production rehearsal closed; official launch pending brand spec updates'
+    "lastSanitizedAction" = 'Controlled production rehearsal closed; official launch pending Hermes runtime implementation'
 WHERE "id" = 'dashboard-prelaunch-001';
 ```
 

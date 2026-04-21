@@ -128,11 +128,13 @@ Blocked locally:
 
 ## Gate 4 — Production Launch Package
 
-Status: controlled production rehearsal complete; official launch pending brand spec updates
+Status: controlled production rehearsal complete; Hermes-centered spec adopted; official launch pending Hermes runtime implementation and later operator approval
 
 Next build target:
 
-- update `docs/AUTONOMOUS_ORGANIZATION_BRAND_SPEC_v0.2.md`
+- implement Hermes queue, heartbeat, and operator kill switch
+- route recurring Class 2 and higher jobs through Hermes with append-only before/after action logs
+- wire support inbox ingestion and escalation routing
 - request a later explicit approval before reopening production launch mode
 - reconcile rehearsal notes into the postmortem record
 
@@ -193,7 +195,7 @@ Completed:
 - public dashboard updated to:
   - `localStatus=scheduled`
   - `uptime=rehearsal complete`
-  - `lastSanitizedAction=Controlled production rehearsal closed; official launch pending brand spec updates`
+  - `lastSanitizedAction` updated to locked-state messaging reflecting rehearsal closure and launch still blocked
 - production database reset from `LIVE` to `SCHEDULED`
 - production counts at close:
   - active reservations: `0`
@@ -202,8 +204,11 @@ Completed:
   - fulfillment rows: `0`
   - Stripe webhook probe events: `1`
 - no public commerce activity recorded during the controlled production rehearsal
+- Hermes-centered brand spec adopted as `docs/AUTONOMOUS_ORGANIZATION_BRAND_SPEC_v0.3.md`
+- canonical brand spec synced to `docs/AUTONOMOUS_ORGANIZATION_BRAND_SPEC.md`
 
 Blocked locally:
 
-- `docs/AUTONOMOUS_ORGANIZATION_BRAND_SPEC_v0.2.md` still needs operator-requested tweaks and additions before official launch
+- Hermes queue, heartbeat, kill switch, and approval-aware execution are not yet implemented in production
+- support inbox ingestion and escalation remain operator-monitored rather than Hermes-managed
 - a later explicit operator approval is required before reopening production launch mode

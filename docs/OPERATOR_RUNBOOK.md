@@ -2,8 +2,8 @@
 
 > Purpose: turn the brand constitution into a working commerce operation without losing the premise, the inventory promise, or the operator's control.
 
-Current date: 2026-04-19  
-Canonical brand spec: `AUTONOMOUS_ORGANIZATION_BRAND_SPEC_v0.2.md`  
+Current date: 2026-04-20  
+Canonical brand spec: `AUTONOMOUS_ORGANIZATION_BRAND_SPEC.md` (current version: `v0.3`)  
 Launch target: Local No. 001, black Gildan 5000 tee, back print only, 100 units total.
 
 ---
@@ -18,9 +18,9 @@ The first version is not a fully autonomous company. The first version is a stri
 - Gate 1: website, database, inventory, checkout, and fulfillment work in test mode.
 - Gate 2: Local No. 001 has approved production files and proof.
 - Gate 3: live checkout processes one real purchase without oversell.
-- Gate 4: agents may draft routine work, but human approval remains required for publishing during the first 30 days.
+- Gate 4: Hermes owns recurring Class 2 and higher work with queue visibility, heartbeat, kill switch, and append-only action logging; human approval remains required for publishing during the first 30 days.
 
-Do not launch the token, livestream, or social automation before commerce works.
+Do not launch the token, livestream, or unsupervised social automation before commerce works and Hermes runtime controls are in place.
 
 ---
 
@@ -136,6 +136,7 @@ Use a boring stack. Boring is the production aesthetic.
 - Next.js with TypeScript
 - PostgreSQL
 - Prisma or Drizzle for database schema and migrations
+- Hermes agent runtime for guarded orchestration, recurring jobs, and approval-aware execution
 - Stripe Checkout Sessions for payment
 - Printify API for fulfillment
 - Discord incoming webhooks for alerts
@@ -148,6 +149,7 @@ Use a boring stack. Boring is the production aesthetic.
 The app must have these modules:
 
 - `brand`: reads the brand spec and exposes guardrails to agents
+- `hermes_runtime`: queue, scheduler, heartbeat, kill switch, and guarded executor for Class 2+ actions
 - `locals`: Local records, lifecycle states, concepts, assets, approvals
 - `inventory`: SKU ceilings, reservations, allocations, reconciliation
 - `checkout`: Stripe Checkout Session creation and payment callbacks
@@ -156,6 +158,8 @@ The app must have these modules:
 - `action_log`: append-only operational log
 - `dashboard`: sanitized public fields
 - `alerts`: Discord notifications
+- `support`: inbox ingestion, triage, escalation routing
+- `token_registry`: production credential metadata and rotation schedule
 - `agent_drafts`: draft concepts, copy, and graphics awaiting approval
 
 ### 2.3 Database tables
@@ -171,9 +175,11 @@ Minimum tables:
 - `fulfillment_orders`
 - `approvals`
 - `action_logs`
+- `hermes_job_runs`
 - `assets`
 - `agent_drafts`
 - `dashboard_snapshots`
+- `token_registry`
 - `webhook_events`
 
 Hard rules:
@@ -193,8 +199,8 @@ Run these commands from `/home/sixer/Desktop/Autonomous Organization`.
 git init
 git branch -m main
 mkdir -p app docs ops scripts assets/locals/001 source/locals/001
-mv AUTONOMOUS_ORGANIZATION_BRAND_SPEC_v0.2.md docs/
-cp docs/AUTONOMOUS_ORGANIZATION_BRAND_SPEC_v0.2.md docs/AUTONOMOUS_ORGANIZATION_BRAND_SPEC.md
+mv AUTONOMOUS_ORGANIZATION_BRAND_SPEC_v0.3.md docs/
+cp docs/AUTONOMOUS_ORGANIZATION_BRAND_SPEC_v0.3.md docs/AUTONOMOUS_ORGANIZATION_BRAND_SPEC.md
 cp mockups/GILDAN5000_FRONT.png assets/
 cp mockups/GILDAN5000_BACK.png assets/
 ```
@@ -420,6 +426,8 @@ Acceptance:
 
 - production domain resolves over HTTPS
 - health endpoint works
+- Hermes heartbeat and queue state are operator-visible
+- Hermes kill switch is tested
 - secrets are not logged
 - service restarts automatically
 - database backup restore is tested
@@ -436,12 +444,16 @@ Before public launch:
 6. Run refund.
 7. Run Printify submission in controlled mode with `PRINTIFY_ENABLED=false`, then enable only for the approved rehearsal order.
 8. Run Discord alert test.
-9. Run dashboard sanitization test.
-10. Run secret scan.
+9. Run Hermes heartbeat and stuck-worker alert test.
+10. Run one blocked Class 3 Hermes job with missing approval and confirm it fails closed.
+11. Run support inbox ingestion and escalation test.
+12. Run dashboard sanitization test.
+13. Run secret scan.
 
 Acceptance:
 
 - every test result is logged
+- every Hermes rehearsal job has a run ID and append-only before/after action logs
 - no oversell
 - no leaked private data
 - no unapproved public copy
@@ -492,7 +504,26 @@ Rules:
 
 ---
 
-## 6. Agent Operating Model
+## 6. Hermes Operating Model
+
+All recurring or machine-initiated Class 2 or higher actions run through Hermes. That includes scheduled publication, support triage, dashboard updates, reconciliation jobs, and any future livestream controller.
+
+Every Hermes job must declare:
+
+- run ID
+- requested action class
+- target surface
+- linked Local, order, or asset IDs when relevant
+- retry budget
+- approval ID when required
+
+Hermes must expose:
+
+- visible heartbeat
+- operator-readable queue state
+- operator kill switch
+- fail-closed approval validation
+- append-only before/after action logs
 
 ### 6.1 First 30 days
 
@@ -505,6 +536,7 @@ Agents may:
 - prepare staging records
 - summarize dashboard metrics
 - propose customer replies
+- queue routine Hermes jobs that remain blocked pending approval
 
 Agents may not:
 
@@ -540,11 +572,12 @@ Do this on launch day.
 3. Confirm checkout live mode keys are loaded.
 4. Confirm Stripe webhook endpoint is live and verified.
 5. Confirm Printify fulfillment submission mode and `PRINTIFY_ENABLED` value.
-6. Confirm Discord alerts.
-7. Confirm dashboard shows sanitized fields only.
-8. Confirm social announcement drafts.
-9. Confirm support inbox works.
-10. Confirm rollback command.
+6. Confirm Hermes heartbeat, queue visibility, and kill switch.
+7. Confirm Discord alerts.
+8. Confirm dashboard shows sanitized fields only.
+9. Confirm social announcement drafts.
+10. Confirm support inbox ingestion works.
+11. Confirm rollback command.
 
 ### T minus 60 minutes
 
