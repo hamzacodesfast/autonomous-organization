@@ -10,7 +10,7 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 echo "==> Installing Hermes Agent if needed"
 if [[ ! -x "$HERMES_BIN" ]]; then
-  curl -fsSL https://raw.githubusercontent.com/NousResearch/hermes-agent/main/scripts/install.sh | bash
+  curl -fsSL https://raw.githubusercontent.com/NousResearch/hermes-agent/main/scripts/install.sh | bash -s -- --skip-setup
 fi
 
 export PATH="$HOME/.local/bin:$PATH"
@@ -45,4 +45,3 @@ echo "==> Hermes install complete"
 echo "Profile directory: $PROFILE_DIR"
 echo "Next required step: set OPENAI_API_KEY in $PROFILE_DIR/.env"
 echo "Suggested check: $HERMES_BIN -p $PROFILE_NAME profile"
-
