@@ -128,12 +128,12 @@ Blocked locally:
 
 ## Gate 4 — Production Launch Package
 
-Status: launch mode open
+Status: launch mode closed; post-launch reconciliation pending
 
 Next build target:
 
-- monitor live checkout, webhook intake, and Printify draft submissions
-- close launch mode when the public window ends
+- reconcile Stripe, Postgres, and Printify counts
+- record fulfillment exceptions and postmortem notes
 
 Completed:
 
@@ -182,6 +182,17 @@ Completed:
   - `STRIPE_AUTOMATIC_TAX_ENABLED` is still not `true`
 - public Local No. 001 page verified with live `Checkout` label
 - production webhook accepted a signed probe event in live mode and returned `ignored`
+- production launch fuses re-locked on Hetzner:
+  - `STRIPE_CHECKOUT_ENABLED=false`
+  - `STRIPE_TEST_MODE_ONLY=true`
+  - `PRINTIFY_ENABLED=false`
+- locked preflight passed on Hetzner after launch-mode closure
+- public Local No. 001 page re-verified with `Checkout Disabled`
+- checkout session route re-verified redirecting to `checkout_disabled`
+- public dashboard updated to:
+  - `localStatus=live`
+  - `uptime=post-launch`
+  - `lastSanitizedAction=Local No. 001 launch window closed; checkout disabled`
 
 Blocked locally:
 
