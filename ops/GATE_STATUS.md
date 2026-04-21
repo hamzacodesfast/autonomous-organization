@@ -132,7 +132,6 @@ Status: production stack installed; public ingress and production preflight pend
 
 Next build target:
 
-- configure the live Stripe webhook endpoint for the production URL
 - run production launch preflight in launch mode
 - open public checkout only after production preflight passes
 
@@ -169,8 +168,14 @@ Completed:
 - production app URLs updated to `https://autonomousorganization.io`
 - deployed locked preflight passed on Hetzner with live Stripe key kind and closed checkout/Printify fuses
 - disabled checkout redirect verified on production domain without localhost leakage
+- production Stripe webhook signing secret synced to Hetzner
+- production webhook route reached over public HTTPS
+- live webhook processing correctly blocked while `STRIPE_TEST_MODE_ONLY=true`
 
 Blocked locally:
 
-- live Stripe webhook endpoint is not configured for the production URL yet
-- production launch preflight has not been run in launch mode
+- production launch preflight run in launch mode and currently blocked by:
+  - `STRIPE_CHECKOUT_ENABLED=false`
+  - `STRIPE_TEST_MODE_ONLY=true`
+  - `PRINTIFY_ENABLED=false`
+  - Local No. 001 database state is `HUMAN_APPROVAL`, not `LIVE`
