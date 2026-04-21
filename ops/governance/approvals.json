@@ -1,0 +1,114 @@
+{
+  "version": 1,
+  "approvals": [
+    {
+      "id": "AO-APPROVAL-0001",
+      "localNumber": null,
+      "approver": "hamzacodesfast",
+      "decision": "APPROVED",
+      "sourceChannel": "Discord #approvals",
+      "scope": "Token work frozen until after commerce launch.",
+      "specVersion": "v0.2",
+      "approvedAt": "2026-04-19T23:30:00.000Z",
+      "expiresAt": null,
+      "linkedObjectIds": [
+        "token-public-language"
+      ],
+      "publicDestination": null,
+      "notes": "No token ownership, profit, governance, dividend, revenue-share, entitlement, price, or market language may be published. Freeze remains in force until a later recorded approval supersedes it."
+    },
+    {
+      "id": "AO-APPROVAL-0002",
+      "localNumber": "001",
+      "approver": "hamzacodesfast",
+      "decision": "APPROVED",
+      "sourceChannel": "Codex operator chat",
+      "scope": "Public policy and contact text for Gate 1.",
+      "specVersion": "v0.2",
+      "approvedAt": "2026-04-20T09:39:23.000Z",
+      "expiresAt": null,
+      "linkedObjectIds": [
+        "app/shipping/page.tsx",
+        "app/returns/page.tsx",
+        "app/privacy/page.tsx",
+        "app/terms/page.tsx",
+        "app/contact/page.tsx"
+      ],
+      "publicDestination": "https://autonomousorganization.io/shipping https://autonomousorganization.io/returns https://autonomousorganization.io/privacy https://autonomousorganization.io/terms https://autonomousorganization.io/contact",
+      "notes": "Gate 1 policy and contact copy is approved for the launch candidate."
+    },
+    {
+      "id": "AO-APPROVAL-0003",
+      "localNumber": "001",
+      "approver": "hamzacodesfast",
+      "decision": "APPROVED",
+      "sourceChannel": "Codex operator chat",
+      "scope": "Local No. 001 physical sample / production proof.",
+      "specVersion": "v0.2",
+      "approvedAt": "2026-04-20T09:58:56.000Z",
+      "expiresAt": null,
+      "linkedObjectIds": [
+        "printify-product:69e5bbbbc109d487ac09e911",
+        "checksum:sha256:7f0327d5781fa57838748c0ad8b351f529b97a9388811391fdd86cadeaa7bb8c",
+        "checksum:sha256:67a97cbe124b6a5f2fdda9b8c5e5f55271f61f3de72a2b566a01899ebc7cc35a"
+      ],
+      "publicDestination": "Printify draft product and Autonomous Organization Local No. 001 mockup surfaces",
+      "notes": "Back-only print placement on a black Gildan 5000 blank was approved against the recorded production proof."
+    },
+    {
+      "id": "AO-APPROVAL-0004",
+      "localNumber": "001",
+      "approver": "hamzacodesfast",
+      "decision": "APPROVED",
+      "sourceChannel": "Codex operator chat",
+      "scope": "Local No. 001 shipping profile and tax behavior for launch rehearsal.",
+      "specVersion": "v0.2",
+      "approvedAt": "2026-04-20T10:06:36.000Z",
+      "expiresAt": null,
+      "linkedObjectIds": [
+        "STRIPE_AUTOMATIC_TAX_ENABLED",
+        "STRIPE_REQUIRE_TERMS_CONSENT",
+        "PRINTIFY_ENABLED",
+        "PRINTIFY_SEND_SHIPPING_NOTIFICATION"
+      ],
+      "publicDestination": "Launch rehearsal checkout and fulfillment configuration for Local No. 001",
+      "notes": "Shipping is included in the $50 USD price. Separate Stripe automatic tax collection remains disabled under operator responsibility."
+    },
+    {
+      "id": "AO-APPROVAL-0006",
+      "localNumber": "001",
+      "approver": "hamzacodesfast",
+      "decision": "APPROVED",
+      "sourceChannel": "Codex operator chat",
+      "scope": "Prepare Local No. 001 production launch package.",
+      "specVersion": "v0.2",
+      "approvedAt": "2026-04-20T18:30:00.000Z",
+      "expiresAt": null,
+      "linkedObjectIds": [
+        "docs/LOCAL_001_PRODUCTION_LAUNCH_PACKAGE.md",
+        "scripts/launch-preflight.mjs"
+      ],
+      "publicDestination": null,
+      "notes": "Codex may prepare launch checklists, preflight tooling, and production-readiness documentation. Checkout and Printify fulfillment remained disabled pending the later launch-window approval. The UTC timestamp was reconstructed from same-day operator-chat chronology and should be replaced if a raw source export is later retained."
+    },
+    {
+      "id": "AO-APPROVAL-0007",
+      "localNumber": "001",
+      "approver": "hamzacodesfast",
+      "decision": "APPROVED",
+      "sourceChannel": "Codex operator chat",
+      "scope": "Public launch window for Local No. 001.",
+      "specVersion": "v0.2",
+      "approvedAt": "2026-04-20T19:36:14.000Z",
+      "expiresAt": null,
+      "linkedObjectIds": [
+        "STRIPE_CHECKOUT_ENABLED",
+        "STRIPE_TEST_MODE_ONLY",
+        "PRINTIFY_ENABLED",
+        "Local-001-public-launch-window"
+      ],
+      "publicDestination": "https://autonomousorganization.io/locals/001",
+      "notes": "The 2026-04-20 window was later treated as a controlled production rehearsal and closed without public commerce activity. Official launch remains pending a later operator approval."
+    }
+  ]
+}

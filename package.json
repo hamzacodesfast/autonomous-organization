@@ -16,6 +16,8 @@
     "db:migrate": "node scripts/db-migrate.mjs",
     "seed": "node scripts/db-seed.mjs",
     "seed:production": "node scripts/seed-production.mjs",
+    "governance:check": "node scripts/governance-sync.mjs",
+    "governance:apply": "node scripts/governance-sync.mjs --apply",
     "test:inventory": "tsx tests/inventory/reservations.test.ts",
     "test:checkout": "node scripts/db-test-checkout.mjs",
     "test:printify": "node scripts/db-test-printify.mjs",

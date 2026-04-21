@@ -1,0 +1,234 @@
+{
+  "version": 1,
+  "entries": [
+    {
+      "id": "ao-stripe-live-secret-key",
+      "platform": "Stripe",
+      "environment": "production",
+      "ownerAccount": "Autonomous Organization Stripe account",
+      "credentialNames": [
+        "STRIPE_SECRET_KEY"
+      ],
+      "purpose": "Server-side live checkout session creation, payment reconciliation, and Stripe API access for Local No. 001.",
+      "scopes": [
+        "checkout.sessions:create",
+        "checkout.sessions:expire",
+        "events:read",
+        "payment_intents:read"
+      ],
+      "status": "ACTIVE",
+      "createdDate": "2026-04-20T19:36:14.000Z",
+      "expirationDate": null,
+      "nextRotationDate": "2026-07-19T19:36:14.000Z",
+      "storageLocation": "Hetzner production app env",
+      "lastSuccessfulUse": null,
+      "notes": "Created date reflects the first confirmed live launch-window use recorded in ops, not necessarily the provider-issued creation time."
+    },
+    {
+      "id": "ao-stripe-publishable-key",
+      "platform": "Stripe",
+      "environment": "production",
+      "ownerAccount": "Autonomous Organization Stripe account",
+      "credentialNames": [
+        "STRIPE_PUBLISHABLE_KEY"
+      ],
+      "purpose": "Client-visible Stripe Checkout initialization on autonomousorganization.io.",
+      "scopes": [
+        "checkout:client-bootstrap"
+      ],
+      "status": "ACTIVE",
+      "createdDate": "2026-04-20T19:36:14.000Z",
+      "expirationDate": null,
+      "nextRotationDate": "2026-07-19T19:36:14.000Z",
+      "storageLocation": "Hetzner production app env and client bundle at runtime",
+      "lastSuccessfulUse": null,
+      "notes": "Publishable key metadata is tracked alongside secret credentials so launch preflight can reconcile checkout surfaces cleanly."
+    },
+    {
+      "id": "ao-stripe-live-webhook-secret",
+      "platform": "Stripe",
+      "environment": "production",
+      "ownerAccount": "Autonomous Organization Stripe account",
+      "credentialNames": [
+        "STRIPE_WEBHOOK_SECRET"
+      ],
+      "purpose": "Verification of signed Stripe webhook events on /api/stripe/webhook.",
+      "scopes": [
+        "webhook-signature-verification"
+      ],
+      "status": "ACTIVE",
+      "createdDate": "2026-04-20T19:36:14.000Z",
+      "expirationDate": null,
+      "nextRotationDate": "2026-07-19T19:36:14.000Z",
+      "storageLocation": "Hetzner production app env",
+      "lastSuccessfulUse": null,
+      "notes": "The production webhook secret was confirmed on Hetzner before the controlled rehearsal. Replace the created date with provider metadata if the Stripe Dashboard export is later captured."
+    },
+    {
+      "id": "ao-printify-production-api-token",
+      "platform": "Printify",
+      "environment": "production",
+      "ownerAccount": "Autonomous Organization Printify shop",
+      "credentialNames": [
+        "PRINTIFY_API_TOKEN"
+      ],
+      "purpose": "Draft order creation and fulfillment submission for approved paid orders.",
+      "scopes": [
+        "catalog:read",
+        "products:read",
+        "orders:create",
+        "orders:read"
+      ],
+      "status": "ACTIVE",
+      "createdDate": "2026-04-20T09:58:56.000Z",
+      "expirationDate": null,
+      "nextRotationDate": "2026-07-19T09:58:56.000Z",
+      "storageLocation": "Hetzner production app env",
+      "lastSuccessfulUse": null,
+      "notes": "Created date tracks the first recorded production-proof approval tied to the Printify draft product and live rehearsal path."
+    },
+    {
+      "id": "ao-discord-alerts-webhook",
+      "platform": "Discord",
+      "environment": "production",
+      "ownerAccount": "Autonomous Organization Discord server",
+      "credentialNames": [
+        "DISCORD_ALERTS_WEBHOOK_URL"
+      ],
+      "purpose": "Internal alert delivery to #alerts.",
+      "scopes": [
+        "channel:post"
+      ],
+      "status": "ACTIVE",
+      "createdDate": "2026-04-20T00:00:00.000Z",
+      "expirationDate": null,
+      "nextRotationDate": "2026-07-19T00:00:00.000Z",
+      "storageLocation": "Hetzner production app env",
+      "lastSuccessfulUse": null,
+      "notes": "Webhook was rotated before the rehearsal closeout. Created date reflects the first post-rotation gate record, not the original Discord creation timestamp."
+    },
+    {
+      "id": "ao-discord-deploys-webhook",
+      "platform": "Discord",
+      "environment": "production",
+      "ownerAccount": "Autonomous Organization Discord server",
+      "credentialNames": [
+        "DISCORD_DEPLOYS_WEBHOOK_URL"
+      ],
+      "purpose": "Internal deployment notifications to #deploys.",
+      "scopes": [
+        "channel:post"
+      ],
+      "status": "ACTIVE",
+      "createdDate": "2026-04-20T00:00:00.000Z",
+      "expirationDate": null,
+      "nextRotationDate": "2026-07-19T00:00:00.000Z",
+      "storageLocation": "Hetzner production app env",
+      "lastSuccessfulUse": null,
+      "notes": "Webhook was rotated before the rehearsal closeout. Created date reflects the first post-rotation gate record, not the original Discord creation timestamp."
+    },
+    {
+      "id": "ao-discord-ops-log-webhook",
+      "platform": "Discord",
+      "environment": "production",
+      "ownerAccount": "Autonomous Organization Discord server",
+      "credentialNames": [
+        "DISCORD_OPS_LOG_WEBHOOK_URL"
+      ],
+      "purpose": "Internal append-only operational summaries to #ops-log.",
+      "scopes": [
+        "channel:post"
+      ],
+      "status": "ACTIVE",
+      "createdDate": "2026-04-20T00:00:00.000Z",
+      "expirationDate": null,
+      "nextRotationDate": "2026-07-19T00:00:00.000Z",
+      "storageLocation": "Hetzner production app env",
+      "lastSuccessfulUse": null,
+      "notes": "Webhook was rotated before the rehearsal closeout. Created date reflects the first post-rotation gate record, not the original Discord creation timestamp."
+    },
+    {
+      "id": "ao-hetzner-production-ssh",
+      "platform": "Hetzner",
+      "environment": "production",
+      "ownerAccount": "Autonomous Organization Hetzner project",
+      "credentialNames": [
+        "ssh-key:ao-production"
+      ],
+      "purpose": "SSH deployment and operator access to ao-production-001.",
+      "scopes": [
+        "server:ssh",
+        "deploy:operator-access"
+      ],
+      "status": "ACTIVE",
+      "createdDate": "2026-04-20T19:36:14.000Z",
+      "expirationDate": null,
+      "nextRotationDate": "2026-07-19T19:36:14.000Z",
+      "storageLocation": "Human-controlled SSH key store and Hetzner Cloud project",
+      "lastSuccessfulUse": null,
+      "notes": "Created date reflects the first recorded production deployment window using the current key binding."
+    },
+    {
+      "id": "ao-github-production-deploy-credential",
+      "platform": "GitHub",
+      "environment": "production",
+      "ownerAccount": "hamzacodesfast/autonomous-organization",
+      "credentialNames": [
+        "github:origin-main"
+      ],
+      "purpose": "Repository sync and deployment source access for the Hetzner production host.",
+      "scopes": [
+        "repo:read",
+        "git:fetch",
+        "git:pull"
+      ],
+      "status": "ACTIVE",
+      "createdDate": "2026-04-20T19:36:14.000Z",
+      "expirationDate": null,
+      "nextRotationDate": "2026-07-19T19:36:14.000Z",
+      "storageLocation": "Human-controlled GitHub credential store and production host git remote config",
+      "lastSuccessfulUse": null,
+      "notes": "Metadata tracks the credential path used to keep /srv/autonomous-organization/app aligned with origin/main."
+    },
+    {
+      "id": "ao-anthropic-production-hermes",
+      "platform": "Anthropic",
+      "environment": "production",
+      "ownerAccount": "ao-brand Hermes profile",
+      "credentialNames": [
+        "ANTHROPIC_API_KEY"
+      ],
+      "purpose": "Temporary model provider credential for the production Hermes runtime during live testing.",
+      "scopes": [
+        "messages:create"
+      ],
+      "status": "ACTIVE",
+      "createdDate": "2026-04-21T16:00:00.000Z",
+      "expirationDate": null,
+      "nextRotationDate": "2026-05-21T16:00:00.000Z",
+      "storageLocation": "ao-brand Hermes profile env on ao-production",
+      "lastSuccessfulUse": "2026-04-21T16:37:00.000Z",
+      "notes": "Temporary provider path while Anthropic credits are available. Replace or downgrade to DORMANT when Hermes returns to OpenAI."
+    },
+    {
+      "id": "ao-openai-production-hermes",
+      "platform": "OpenAI",
+      "environment": "production",
+      "ownerAccount": "ao-brand Hermes profile",
+      "credentialNames": [
+        "OPENAI_API_KEY"
+      ],
+      "purpose": "Fallback model provider credential for the production Hermes runtime.",
+      "scopes": [
+        "responses:create"
+      ],
+      "status": "DORMANT",
+      "createdDate": "2026-04-20T00:00:00.000Z",
+      "expirationDate": null,
+      "nextRotationDate": "2026-07-19T00:00:00.000Z",
+      "storageLocation": "ao-brand Hermes profile env on ao-production",
+      "lastSuccessfulUse": null,
+      "notes": "Retained as a dormant fallback while Hermes is temporarily pointed at Anthropic."
+    }
+  ]
+}

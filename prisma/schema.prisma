@@ -79,9 +79,16 @@ enum HermesJobStatus {
   CANCELLED
 }
 
+enum TokenRegistryStatus {
+  ACTIVE
+  DORMANT
+  ROTATED
+  REVOKED
+}
+
 model Local {
-  id                 Int       @id @default(autoincrement())
-  localNumber        String    @unique
+  id                 Int        @id @default(autoincrement())
+  localNumber        String     @unique
   conceptSentence    String
   state              LocalState
   approvedBlank      String
@@ -90,33 +97,33 @@ model Local {
   garmentColorways   String[]
   editionCount       Int
   retailPriceCents   Int
-  currency           String    @default("USD")
+  currency           String     @default("USD")
   launchTimestamp    DateTime?
   productCopy        String?
   socialCopy         String?
   sourceLicenseNotes String?
   archiveUrl         String?
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @updatedAt
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
 
-  skus        LocalSku[]
-  assets      Asset[]
-  approvals   Approval[]
-  actionLogs  ActionLog[]
+  skus          LocalSku[]
+  assets        Asset[]
+  approvals     Approval[]
+  actionLogs    ActionLog[]
   hermesJobRuns HermesJobRun[]
-  orderItems  OrderItem[]
+  orderItems    OrderItem[]
 }
 
 model LocalSku {
-  id              Int      @id @default(autoincrement())
-  localId         Int
-  sku             String   @unique
-  size            String
-  color           String
-  editionCeiling  Int
-  allocatedCount  Int      @default(0)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id             Int      @id @default(autoincrement())
+  localId        Int
+  sku            String   @unique
+  size           String
+  color          String
+  editionCeiling Int
+  allocatedCount Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
   local        Local                  @relation(fields: [localId], references: [id], onDelete: Cascade)
   reservations InventoryReservation[]
@@ -127,15 +134,15 @@ model LocalSku {
 }
 
 model InventoryReservation {
-  id             String            @id
-  localSkuId     Int
-  quantity       Int
-  status         ReservationStatus @default(ACTIVE)
-  expiresAt      DateTime
-  allocatedAt    DateTime?
-  cancelledAt    DateTime?
-  createdAt      DateTime          @default(now())
-  updatedAt      DateTime          @updatedAt
+  id              String            @id
+  localSkuId      Int
+  quantity        Int
+  status          ReservationStatus @default(ACTIVE)
+  expiresAt       DateTime
+  allocatedAt     DateTime?
+  cancelledAt     DateTime?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
   stripeSessionId String?
 
   localSku LocalSku @relation(fields: [localSkuId], references: [id], onDelete: Cascade)
@@ -201,21 +208,24 @@ model FulfillmentOrder {
 }
 
 model Approval {
-  id           String           @id
-  localId      Int?
-  approver     String
-  decision     ApprovalDecision
-  scope        String
-  specVersion  String
-  approvedAt   DateTime
-  expiresAt    DateTime?
-  notes        String?
+  id                String           @id
+  localId           Int?
+  approver          String
+  decision          ApprovalDecision
+  sourceChannel     String?
+  scope             String
+  specVersion       String
+  approvedAt        DateTime
+  expiresAt         DateTime?
+  linkedObjectIds   String[]         @default([])
+  publicDestination String?
+  notes             String?
 
   local Local? @relation(fields: [localId], references: [id])
 }
 
 model ActionLog {
-  id             String      @id
+  id             String         @id
   localId        Int?
   jobRunId       String?
   timestamp      DateTime
@@ -230,32 +240,32 @@ model ActionLog {
   state          ActionState
   summary        String
 
-  local  Local?         @relation(fields: [localId], references: [id])
-  jobRun HermesJobRun?  @relation(fields: [jobRunId], references: [id], onDelete: SetNull)
+  local  Local?        @relation(fields: [localId], references: [id])
+  jobRun HermesJobRun? @relation(fields: [jobRunId], references: [id], onDelete: SetNull)
 
   @@index([jobRunId])
   @@index([requestId, phase])
 }
 
 model Asset {
-  id           String   @id
-  localId      Int
-  kind         String
-  path         String
-  checksum     String?
-  sourceNotes  String?
-  approved     Boolean  @default(false)
-  createdAt    DateTime @default(now())
+  id          String   @id
+  localId     Int
+  kind        String
+  path        String
+  checksum    String?
+  sourceNotes String?
+  approved    Boolean  @default(false)
+  createdAt   DateTime @default(now())
 
   local Local @relation(fields: [localId], references: [id], onDelete: Cascade)
 }
 
 model AgentDraft {
-  id          String   @id
+  id          String    @id
   kind        String
   localNumber String?
   content     String
-  createdAt   DateTime @default(now())
+  createdAt   DateTime  @default(now())
   reviewedAt  DateTime?
   decision    String?
 }
@@ -271,15 +281,15 @@ model DashboardSnapshot {
 }
 
 model HermesRuntimeControl {
-  id                       String   @id
-  runtimeEnabled           Boolean  @default(true)
-  killSwitchActive         Boolean  @default(false)
-  queueState               String   @default("idle")
+  id                       String    @id
+  runtimeEnabled           Boolean   @default(true)
+  killSwitchActive         Boolean   @default(false)
+  queueState               String    @default("idle")
   lastHeartbeatAt          DateTime?
-  heartbeatIntervalSeconds Int      @default(300)
+  heartbeatIntervalSeconds Int       @default(300)
   lastError                String?
-  createdAt                DateTime @default(now())
-  updatedAt                DateTime @updatedAt
+  createdAt                DateTime  @default(now())
+  updatedAt                DateTime  @updatedAt
 }
 
 model HermesJobRun {
@@ -312,28 +322,31 @@ model HermesJobRun {
 }
 
 model TokenRegistryEntry {
-  id                String   @id
+  id                String              @id
   platform          String
   environment       String
   ownerAccount      String
+  credentialNames   String[]
   purpose           String
   scopes            String[]
+  status            TokenRegistryStatus @default(ACTIVE)
   createdDate       DateTime
   expirationDate    DateTime?
   nextRotationDate  DateTime?
   storageLocation   String
   lastSuccessfulUse DateTime?
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  notes             String?
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
 
   @@index([platform, environment])
 }
 
 model WebhookEvent {
-  id          String   @id
+  id          String    @id
   platform    String
   eventType   String
-  receivedAt  DateTime @default(now())
+  receivedAt  DateTime  @default(now())
   processedAt DateTime?
   payloadHash String
 }

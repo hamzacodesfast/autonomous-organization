@@ -1,5 +1,14 @@
 import fs from "node:fs";
 import { PrismaClient } from "@prisma/client";
+import {
+  buildApprovalUpsertData,
+  buildLocalNumberIndex,
+  buildTokenRegistryUpsertData,
+  comparableApprovalRecord,
+  comparableTokenRegistryRecord,
+  diffGovernanceRecords,
+  loadGovernanceManifest,
+} from "./lib/governance-manifest.mjs";
 
 const expectedSizes = ["S", "M", "L", "XL", "XXL"];
 const expectedVariantEnv = [
@@ -35,7 +44,9 @@ function loadEnvFile(path = ".env") {
       value = value.slice(1, -1);
     }
 
-    process.env[key] = value;
+    if (process.env[key] === undefined) {
+      process.env[key] = value;
+    }
   }
 }
 
@@ -244,7 +255,9 @@ async function validateDatabase(mode) {
   const prisma = new PrismaClient();
 
   try {
-    const [local, runtimeControl, tokenRegistryEntries] = await Promise.all([
+    const governanceManifest = loadGovernanceManifest();
+
+    const [local, locals, runtimeControl, approvals, tokenRegistryEntries] = await Promise.all([
       prisma.local.findUnique({
       where: { localNumber: "001" },
       include: {
@@ -260,11 +273,58 @@ async function validateDatabase(mode) {
         },
       },
       }),
+      prisma.local.findMany({
+        select: {
+          id: true,
+          localNumber: true,
+        },
+      }),
       prisma.hermesRuntimeControl.findUnique({
         where: { id: "hermes-runtime-primary" },
       }),
-      prisma.tokenRegistryEntry.count(),
+      prisma.approval.findMany({
+        include: {
+          local: {
+            select: {
+              localNumber: true,
+            },
+          },
+        },
+      }),
+      prisma.tokenRegistryEntry.findMany(),
     ]);
+
+    const localsByNumber = buildLocalNumberIndex(locals);
+    const governanceDiff = diffGovernanceRecords({
+      manifestApprovals: governanceManifest.approvals.map((approval) =>
+        comparableApprovalRecord({
+          id: approval.id,
+          ...buildApprovalUpsertData(approval, localsByNumber),
+          localNumber: approval.localNumber,
+        }),
+      ),
+      manifestTokens: governanceManifest.tokenRegistry.map((entry) =>
+        comparableTokenRegistryRecord({
+          id: entry.id,
+          ...buildTokenRegistryUpsertData(entry),
+        }),
+      ),
+      dbApprovals: approvals.map((approval) => ({
+        id: approval.id,
+        localNumber: approval.local?.localNumber ?? null,
+        approver: approval.approver,
+        decision: approval.decision,
+        sourceChannel: approval.sourceChannel,
+        scope: approval.scope,
+        specVersion: approval.specVersion,
+        approvedAt: approval.approvedAt,
+        expiresAt: approval.expiresAt,
+        linkedObjectIds: approval.linkedObjectIds,
+        publicDestination: approval.publicDestination,
+        notes: approval.notes,
+      })),
+      dbTokens: tokenRegistryEntries,
+    });
 
     if (!local) {
       fail("Local No. 001 is missing from the database.");
@@ -306,8 +366,32 @@ async function validateDatabase(mode) {
       }
     }
 
-    if (tokenRegistryEntries === 0) {
-      warn("Token registry metadata is empty.");
+    if (governanceDiff.approvalCreates.length > 0 || governanceDiff.approvalUpdates.length > 0) {
+      const approvalIds = [
+        ...governanceDiff.approvalCreates.map((entry) => entry.id),
+        ...governanceDiff.approvalUpdates.map((entry) => entry.expected.id),
+      ];
+      const message = `Approval registry drift detected for: ${approvalIds.join(", ")}. Run governance sync.`;
+
+      if (mode === "launch") {
+        fail(message);
+      } else {
+        warn(message);
+      }
+    }
+
+    if (governanceDiff.tokenCreates.length > 0 || governanceDiff.tokenUpdates.length > 0) {
+      const tokenIds = [
+        ...governanceDiff.tokenCreates.map((entry) => entry.id),
+        ...governanceDiff.tokenUpdates.map((entry) => entry.expected.id),
+      ];
+      const message = `Token registry drift detected for: ${tokenIds.join(", ")}. Run governance sync.`;
+
+      if (mode === "launch") {
+        fail(message);
+      } else {
+        warn(message);
+      }
     }
 
     if (local.editionCount !== 100) {

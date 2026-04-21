@@ -2,6 +2,8 @@
 
 This ledger records non-secret approval metadata. Source screenshots, Discord message IDs, and private channel exports remain outside Git unless explicitly approved.
 
+When approval metadata changes, update this ledger and `ops/governance/approvals.json` in the same change so Postgres backfill and human-readable history remain aligned.
+
 ## AO-APPROVAL-0001
 
 - Date: 2026-04-19

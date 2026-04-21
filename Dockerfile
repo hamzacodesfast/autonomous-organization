@@ -32,6 +32,7 @@ COPY prisma ./prisma
 RUN npx prisma generate
 
 COPY scripts ./scripts
+COPY ops ./ops
 COPY docs ./docs
 COPY source ./source
 COPY --from=builder /app/.next ./.next

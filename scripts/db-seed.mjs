@@ -1,12 +1,25 @@
 import { spawnSync } from "node:child_process";
 import { localDatabaseUrl } from "./db-url.mjs";
 
-const result = spawnSync("npx", ["tsx", "prisma/seed.ts"], {
+const env = {
+  ...process.env,
+  DATABASE_URL: localDatabaseUrl,
+};
+
+const seedResult = spawnSync("npx", ["tsx", "prisma/seed.ts"], {
+  env,
+  stdio: "inherit",
+});
+
+if ((seedResult.status ?? 1) !== 0) {
+  process.exit(seedResult.status ?? 1);
+}
+
+const governanceResult = spawnSync("node", ["scripts/governance-sync.mjs", "--apply"], {
   env: {
-    ...process.env,
-    DATABASE_URL: localDatabaseUrl,
+    ...env,
   },
   stdio: "inherit",
 });
 
-process.exit(result.status ?? 1);
+process.exit(governanceResult.status ?? 1);

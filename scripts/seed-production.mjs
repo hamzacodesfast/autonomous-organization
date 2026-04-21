@@ -1,4 +1,10 @@
-import { ActionState, ApprovalDecision, LocalState, PrismaClient } from "@prisma/client";
+import { ActionState, LocalState, PrismaClient } from "@prisma/client";
+import {
+  buildApprovalUpsertData,
+  buildLocalNumberIndex,
+  buildTokenRegistryUpsertData,
+  loadGovernanceManifest,
+} from "./lib/governance-manifest.mjs";
 
 const prisma = new PrismaClient();
 
@@ -72,30 +78,34 @@ async function main() {
     });
   }
 
-  await prisma.approval.upsert({
-    where: { id: "AO-APPROVAL-0001" },
-    update: {
-      localId: local.id,
-      approver: "hamzacodesfast",
-      decision: ApprovalDecision.APPROVED,
-      scope: "Token work frozen until after commerce launch.",
-      specVersion: "v0.3",
-      approvedAt: new Date("2026-04-19T23:30:00.000Z"),
-      notes:
-        "No token ownership, profit, governance, dividend, revenue-share, entitlement, price, or market language may be published.",
-    },
-    create: {
-      id: "AO-APPROVAL-0001",
-      localId: local.id,
-      approver: "hamzacodesfast",
-      decision: ApprovalDecision.APPROVED,
-      scope: "Token work frozen until after commerce launch.",
-      specVersion: "v0.3",
-      approvedAt: new Date("2026-04-19T23:30:00.000Z"),
-      notes:
-        "No token ownership, profit, governance, dividend, revenue-share, entitlement, price, or market language may be published.",
-    },
-  });
+  const governanceManifest = loadGovernanceManifest();
+  const localsByNumber = buildLocalNumberIndex([local]);
+
+  for (const approval of governanceManifest.approvals) {
+    const data = buildApprovalUpsertData(approval, localsByNumber);
+
+    await prisma.approval.upsert({
+      where: { id: approval.id },
+      update: data,
+      create: {
+        id: approval.id,
+        ...data,
+      },
+    });
+  }
+
+  for (const entry of governanceManifest.tokenRegistry) {
+    const data = buildTokenRegistryUpsertData(entry);
+
+    await prisma.tokenRegistryEntry.upsert({
+      where: { id: entry.id },
+      update: data,
+      create: {
+        id: entry.id,
+        ...data,
+      },
+    });
+  }
 
   await prisma.actionLog.upsert({
     where: { id: "action-token-freeze-001" },

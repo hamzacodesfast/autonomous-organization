@@ -63,6 +63,8 @@ npm run db:migrate
 npm run seed
 ```
 
+The seed flow now applies the governance manifests as well, so local Postgres includes the tracked approval records and token registry metadata.
+
 The public site uses static fallback data unless database reads are explicitly enabled:
 
 ```bash
@@ -120,6 +122,13 @@ Locked mode verifies that public checkout and Printify are closed:
 
 ```bash
 npm run launch:preflight
+```
+
+Check or apply governance metadata manually:
+
+```bash
+npm run governance:check
+npm run governance:apply
 ```
 
 Launch mode is only for an explicitly approved production rehearsal or public launch window:
