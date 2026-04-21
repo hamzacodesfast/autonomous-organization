@@ -9,9 +9,9 @@ This document connects the Autonomous Organization runtime to a real model-backe
 - Hermes installs under the `ao_deploy` user on the VPS.
 - Hermes profile name: `ao-brand`
 - Workspace root: `/srv/autonomous-organization/app`
-- Model connection: OpenAI-compatible endpoint using:
-  - `OPENAI_BASE_URL=https://api.openai.com/v1`
-  - `OPENAI_API_KEY=...`
+- Model connection: the checked-in profile example targets an OpenAI-compatible endpoint.
+- Temporary provider changes, including Anthropic-backed live testing, may exist on the VPS as intentional profile overrides.
+- Provider credentials stay only in the live Hermes profile env on the VPS.
 - Hermes scheduled work runs through `hermes -p ao-brand cron tick` on a systemd timer.
 - Hermes heartbeat sync updates the app runtime state through `docker exec ao-app node scripts/hermes-heartbeat.mjs`.
 
@@ -45,20 +45,56 @@ The script:
 
 The bootstrap intentionally skips Hermes' interactive setup wizard. On production, the repo-owned profile files are authoritative. Do not run `ao-brand setup` unless you are intentionally reconfiguring the profile and understand the drift you are introducing.
 
-## Required secret after install
+## Required provider credential after install
 
-The install is not complete until this file contains a real key:
+The install is not complete until this file contains real provider credentials:
 
 ```bash
 /home/ao_deploy/.hermes/profiles/ao-brand/.env
 ```
 
-Minimum contents:
+The repo example currently uses an OpenAI-compatible shape:
 
 ```bash
 OPENAI_BASE_URL=https://api.openai.com/v1
 OPENAI_API_KEY=sk-...
 ```
+
+If the live profile is temporarily pointed at Anthropic instead, set the provider-specific key material the live profile expects. Do not commit that override back into Git unless the repo-owned profile template is being intentionally changed.
+
+## Discord approval surface
+
+Hermes does not approve itself. Human approval travels through the production app's Discord interaction endpoint:
+
+```text
+https://autonomousorganization.io/api/discord/interactions
+```
+
+The production app env must contain the Discord control-plane variables used by that endpoint:
+
+- `DISCORD_APPLICATION_ID`
+- `DISCORD_PUBLIC_KEY`
+- `DISCORD_BOT_TOKEN`
+- `DISCORD_APPROVALS_CHANNEL_ID`
+- `DISCORD_DROPS_PENDING_APPROVAL_CHANNEL_ID`
+- `DISCORD_APPROVER_USER_IDS`
+
+The bot posts pending requests to `#drops-pending-approval` and records decisions in `#approvals`. Humans should not need shell access to the VPS for routine approvals.
+
+Smoke-test the approval path from the repo once the env is populated:
+
+```bash
+npm run discord:request-approval -- \
+  --request-id=smoke-discord-approval-001 \
+  --local-number=001 \
+  --action-class="Class 3" \
+  --platform=Hermes \
+  --target-surface=approval_smoke_test \
+  --scope="Smoke test the Discord approval path for Hermes." \
+  --requested-by=operator-smoke-test
+```
+
+Expected result: a pending approval message appears in `#drops-pending-approval`, the buttons work, and the decision is written to `#approvals`.
 
 ## First validation
 

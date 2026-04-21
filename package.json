@@ -24,6 +24,7 @@
     "launch:preflight": "node scripts/launch-preflight.mjs",
     "hermes:heartbeat": "node scripts/hermes-heartbeat.mjs",
     "hermes:status": "node scripts/hermes-status.mjs",
+    "discord:request-approval": "tsx scripts/discord-request-approval.ts",
     "export:social": "node scripts/export-social-assets.mjs",
     "export:print": "node scripts/export-print-assets.mjs"
   },
@@ -34,6 +35,7 @@
     "react": "19.2.5",
     "react-dom": "19.2.5",
     "stripe": "^22.0.2",
+    "tweetnacl": "^1.0.3",
     "zod": "4.1.13"
   },
   "devDependencies": {

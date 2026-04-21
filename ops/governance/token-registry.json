@@ -148,6 +148,128 @@
       "notes": "Webhook was rotated before the rehearsal closeout. Created date reflects the first post-rotation gate record, not the original Discord creation timestamp."
     },
     {
+      "id": "ao-discord-drops-pending-approval-webhook",
+      "platform": "Discord",
+      "environment": "production",
+      "ownerAccount": "Autonomous Organization Discord server",
+      "credentialNames": [
+        "DISCORD_DROPS_PENDING_APPROVAL_WEBHOOK_URL"
+      ],
+      "purpose": "Optional one-way mirror traffic to #drops-pending-approval for non-interactive approval notices.",
+      "scopes": [
+        "channel:post"
+      ],
+      "status": "ACTIVE",
+      "createdDate": "2026-04-21T00:00:00.000Z",
+      "expirationDate": null,
+      "nextRotationDate": "2026-07-20T00:00:00.000Z",
+      "storageLocation": "Hetzner production app env",
+      "lastSuccessfulUse": null,
+      "notes": "The approval channel remains bot-first. This webhook exists only for one-way mirrored notices when interactive bot controls are not needed."
+    },
+    {
+      "id": "ao-discord-customer-escalations-webhook",
+      "platform": "Discord",
+      "environment": "production",
+      "ownerAccount": "Autonomous Organization Discord server",
+      "credentialNames": [
+        "DISCORD_CUSTOMER_ESCALATIONS_WEBHOOK_URL"
+      ],
+      "purpose": "Internal escalation routing to #customer-escalations.",
+      "scopes": [
+        "channel:post"
+      ],
+      "status": "ACTIVE",
+      "createdDate": "2026-04-21T00:00:00.000Z",
+      "expirationDate": null,
+      "nextRotationDate": "2026-07-20T00:00:00.000Z",
+      "storageLocation": "Hetzner production app env",
+      "lastSuccessfulUse": null,
+      "notes": "Used for support or fulfillment cases that require a human operator review path without exposing raw inbox credentials."
+    },
+    {
+      "id": "ao-discord-postmortems-webhook",
+      "platform": "Discord",
+      "environment": "production",
+      "ownerAccount": "Autonomous Organization Discord server",
+      "credentialNames": [
+        "DISCORD_POSTMORTEMS_WEBHOOK_URL"
+      ],
+      "purpose": "Internal postmortem delivery to #postmortems.",
+      "scopes": [
+        "channel:post"
+      ],
+      "status": "ACTIVE",
+      "createdDate": "2026-04-21T00:00:00.000Z",
+      "expirationDate": null,
+      "nextRotationDate": "2026-07-20T00:00:00.000Z",
+      "storageLocation": "Hetzner production app env",
+      "lastSuccessfulUse": null,
+      "notes": "Separate webhook keeps postmortem traffic isolated from high-urgency alert channels."
+    },
+    {
+      "id": "ao-discord-application-id",
+      "platform": "Discord",
+      "environment": "production",
+      "ownerAccount": "Autonomous Organization Discord application",
+      "credentialNames": [
+        "DISCORD_APPLICATION_ID"
+      ],
+      "purpose": "Discord application identity for Hermes approval interactions.",
+      "scopes": [
+        "interactions:identify-application"
+      ],
+      "status": "ACTIVE",
+      "createdDate": "2026-04-21T00:00:00.000Z",
+      "expirationDate": null,
+      "nextRotationDate": null,
+      "storageLocation": "Hetzner production app env",
+      "lastSuccessfulUse": null,
+      "notes": "Application ID is not secret, but it is governed alongside the bot and interaction controls because the approval surface depends on it."
+    },
+    {
+      "id": "ao-discord-interactions-public-key",
+      "platform": "Discord",
+      "environment": "production",
+      "ownerAccount": "Autonomous Organization Discord application",
+      "credentialNames": [
+        "DISCORD_PUBLIC_KEY"
+      ],
+      "purpose": "Verification of signed Discord interaction payloads on /api/discord/interactions.",
+      "scopes": [
+        "interactions:signature-verification"
+      ],
+      "status": "ACTIVE",
+      "createdDate": "2026-04-21T00:00:00.000Z",
+      "expirationDate": null,
+      "nextRotationDate": null,
+      "storageLocation": "Hetzner production app env",
+      "lastSuccessfulUse": null,
+      "notes": "Public key is not secret, but it is required for fail-closed verification of Discord button interactions."
+    },
+    {
+      "id": "ao-discord-hermes-bot-token",
+      "platform": "Discord",
+      "environment": "production",
+      "ownerAccount": "Autonomous Organization Discord application",
+      "credentialNames": [
+        "DISCORD_BOT_TOKEN"
+      ],
+      "purpose": "Hermes approval bot message delivery to #drops-pending-approval and #approvals.",
+      "scopes": [
+        "bot:send-messages",
+        "bot:read-message-history",
+        "interactions:receive"
+      ],
+      "status": "ACTIVE",
+      "createdDate": "2026-04-21T00:00:00.000Z",
+      "expirationDate": null,
+      "nextRotationDate": "2026-07-20T00:00:00.000Z",
+      "storageLocation": "Hetzner production app env",
+      "lastSuccessfulUse": null,
+      "notes": "This is the control-plane credential that lets humans approve Hermes actions from Discord without shell access to the VPS."
+    },
+    {
       "id": "ao-hetzner-production-ssh",
       "platform": "Hetzner",
       "environment": "production",

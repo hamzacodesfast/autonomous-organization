@@ -43,5 +43,5 @@ sudo systemctl enable --now ao-hermes-cron-tick.timer
 
 echo "==> Hermes install complete"
 echo "Profile directory: $PROFILE_DIR"
-echo "Next required step: set OPENAI_API_KEY in $PROFILE_DIR/.env"
+echo "Next required step: set the live model provider credentials in $PROFILE_DIR/.env"
 echo "Suggested check: $HERMES_BIN -p $PROFILE_NAME profile"

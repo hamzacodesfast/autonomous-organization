@@ -92,6 +92,9 @@ Create incoming webhooks for:
 - alerts
 - deploys
 - ops-log
+- customer-escalations
+- postmortems
+- optional: drops-pending-approval mirror
 
 For each webhook:
 
@@ -103,6 +106,9 @@ For each webhook:
    - `AO Alerts` for `#alerts`
    - `AO Deploys` for `#deploys`
    - `AO Ops Log` for `#ops-log`
+   - `AO Customer Escalations` for `#customer-escalations`
+   - `AO Postmortems` for `#postmortems`
+   - `AO Drops Pending Approval Mirror` only if you want a one-way mirror into `#drops-pending-approval`
 6. Confirm the webhook posts to the correct channel.
 7. Copy the webhook URL.
 
@@ -111,6 +117,43 @@ Store webhook URLs only in the secret store. Use these environment variable name
 - `DISCORD_ALERTS_WEBHOOK_URL`
 - `DISCORD_DEPLOYS_WEBHOOK_URL`
 - `DISCORD_OPS_LOG_WEBHOOK_URL`
+- `DISCORD_CUSTOMER_ESCALATIONS_WEBHOOK_URL`
+- `DISCORD_POSTMORTEMS_WEBHOOK_URL`
+- `DISCORD_DROPS_PENDING_APPROVAL_WEBHOOK_URL` only if the optional mirror is used
+
+Create a Discord application and bot for approvals. Incoming webhooks are one-way only. Human approval inside Discord requires a bot and a signed interaction endpoint.
+
+1. Open the Discord Developer Portal.
+2. Create a new application named `AO Hermes`.
+3. Add a bot to the application.
+4. Copy and store:
+   - application ID
+   - public key
+   - bot token
+5. Invite the bot to the private server.
+6. Give the bot permission to view channels, send messages, and read message history in:
+   - `#drops-pending-approval`
+   - `#approvals`
+7. Turn on developer mode in Discord and copy:
+   - the channel ID for `#drops-pending-approval`
+   - the channel ID for `#approvals`
+   - the Discord user IDs of every human approver
+8. After the production site is reachable over HTTPS, set the Discord interactions endpoint to:
+
+```text
+https://autonomousorganization.io/api/discord/interactions
+```
+
+Use these environment variable names later:
+
+- `DISCORD_APPLICATION_ID`
+- `DISCORD_PUBLIC_KEY`
+- `DISCORD_BOT_TOKEN`
+- `DISCORD_APPROVALS_CHANNEL_ID`
+- `DISCORD_DROPS_PENDING_APPROVAL_CHANNEL_ID`
+- `DISCORD_APPROVER_USER_IDS`
+
+Humans approve Hermes actions in Discord. They should not need shell access to the VPS for routine approvals.
 
 ### 1.4 Freeze the token
 
@@ -627,6 +670,7 @@ Do this on launch day.
 - Stripe recommends idempotency keys for POST requests to avoid duplicate operations.
 - Printify product publishing has documented rate limits, and Printify supports shop webhooks for product/order events.
 - Discord incoming webhooks are appropriate for one-way alerts into a channel.
+- Discord button-based approvals require a bot token, application ID, public key, and a signed HTTPS interactions endpoint.
 - Namecheap CNAME records should not be used on the bare `@` domain; use `www` or provider-appropriate A/redirect records for apex handling.
 - Hetzner SSH setup requires key-based server access and firewall allowance for SSH when applicable.
 - IRS EIN applications should be done directly through the IRS when eligible; do not pay third-party EIN sites.

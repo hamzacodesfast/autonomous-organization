@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
-import { ActionLogPhase, ActionState, HermesJobStatus } from "@prisma/client";
+import { ActionLogPhase, ActionState, ApprovalRequestStatus, HermesJobStatus } from "@prisma/client";
+import { createDiscordApprovalRequest } from "@/lib/discord-approvals";
 import { prisma } from "@/lib/prisma";
 
 const runtimeControlId = "hermes-runtime-primary";
@@ -19,6 +20,13 @@ export type HermesRuntimeSnapshot = {
   lastJob: string;
 };
 
+type HermesJobApprovalConfig = {
+  scope: string;
+  requestedBy?: string;
+  proposedApprovalId?: string;
+  notes?: string;
+};
+
 type HermesJobConfig<T> = {
   jobName: string;
   actionClass: string;
@@ -32,6 +40,7 @@ type HermesJobConfig<T> = {
   retryBudget?: number;
   allowWhenKillSwitchActive?: boolean;
   agentName?: string;
+  approval?: HermesJobApprovalConfig;
   summarizeFailure?: (error: unknown) => string;
   summarizeSuccess?: (result: T) => string;
 };
@@ -40,6 +49,7 @@ type HermesJobContext = {
   agentName: string;
   jobId: string;
   requestId: string;
+  approvalId?: string;
 };
 
 function databaseReadsEnabled() {
@@ -207,6 +217,173 @@ function blockedSummary(error: HermesRuntimeError) {
   return error.message;
 }
 
+function approvalExpired(expiresAt: Date | null) {
+  return Boolean(expiresAt && expiresAt.getTime() <= Date.now());
+}
+
+async function validateApprovalRecord(input: {
+  approvalId: string;
+  scope: string;
+  localId?: number;
+  publicUrl?: string;
+}) {
+  const approval = await prisma.approval.findUnique({
+    where: { id: input.approvalId },
+  });
+
+  if (!approval) {
+    throw new HermesRuntimeError(
+      `Approval ${input.approvalId} was not found.`,
+      "hermes_approval_missing",
+      409,
+    );
+  }
+
+  if (approval.decision !== "APPROVED") {
+    throw new HermesRuntimeError(
+      `Approval ${input.approvalId} is ${approval.decision.toLowerCase()}.`,
+      "hermes_approval_not_approved",
+      409,
+    );
+  }
+
+  if (approvalExpired(approval.expiresAt)) {
+    throw new HermesRuntimeError(
+      `Approval ${input.approvalId} has expired.`,
+      "hermes_approval_expired",
+      409,
+    );
+  }
+
+  if (approval.scope !== input.scope) {
+    throw new HermesRuntimeError(
+      `Approval ${input.approvalId} does not match the required scope.`,
+      "hermes_approval_scope_mismatch",
+      409,
+    );
+  }
+
+  if (input.localId && approval.localId && approval.localId !== input.localId) {
+    throw new HermesRuntimeError(
+      `Approval ${input.approvalId} is attached to a different Local.`,
+      "hermes_approval_local_mismatch",
+      409,
+    );
+  }
+
+  if (input.publicUrl && approval.publicDestination && approval.publicDestination !== input.publicUrl) {
+    throw new HermesRuntimeError(
+      `Approval ${input.approvalId} does not match the required public destination.`,
+      "hermes_approval_destination_mismatch",
+      409,
+    );
+  }
+
+  return approval.id;
+}
+
+async function resolveHermesApproval(input: {
+  requestId: string;
+  jobId: string;
+  agentName: string;
+  config: Pick<
+    HermesJobConfig<unknown>,
+    "actionClass" | "platform" | "targetSurface" | "localId" | "approvalId" | "affectedObject" | "publicUrl" | "approval"
+  >;
+}) {
+  if (!input.config.approval) {
+    return input.config.approvalId;
+  }
+
+  if (!databaseReadsEnabled()) {
+    if (input.config.approvalId) {
+      return input.config.approvalId;
+    }
+
+    throw new HermesRuntimeError(
+      "Hermes cannot request human approval while database reads are disabled.",
+      "hermes_approval_unavailable",
+      409,
+    );
+  }
+
+  if (input.config.approvalId) {
+    return validateApprovalRecord({
+      approvalId: input.config.approvalId,
+      scope: input.config.approval.scope,
+      localId: input.config.localId,
+      publicUrl: input.config.publicUrl,
+    });
+  }
+
+  const existingRequest = await prisma.approvalRequest.findUnique({
+    where: { requestId: input.requestId },
+  });
+
+  if (existingRequest?.status === ApprovalRequestStatus.APPROVED && existingRequest.approvalId) {
+    return validateApprovalRecord({
+      approvalId: existingRequest.approvalId,
+      scope: input.config.approval.scope,
+      localId: input.config.localId,
+      publicUrl: input.config.publicUrl,
+    });
+  }
+
+  if (existingRequest?.status === ApprovalRequestStatus.PENDING) {
+    throw new HermesRuntimeError(
+      `Human approval is pending in Discord for request ${existingRequest.id}.`,
+      "hermes_approval_pending",
+      409,
+    );
+  }
+
+  if (existingRequest?.status === ApprovalRequestStatus.REJECTED) {
+    throw new HermesRuntimeError(
+      `Discord rejected request ${existingRequest.id}. Revise the action before re-requesting approval.`,
+      "hermes_approval_rejected",
+      409,
+    );
+  }
+
+  if (existingRequest) {
+    throw new HermesRuntimeError(
+      `Discord approval request ${existingRequest.id} is ${existingRequest.status.toLowerCase()}. Re-run with a new request ID after fixing the underlying issue.`,
+      "hermes_approval_unavailable",
+      409,
+    );
+  }
+
+  const created = await createDiscordApprovalRequest({
+    requestId: input.requestId,
+    jobRunId: input.jobId,
+    localId: input.config.localId,
+    actionClass: input.config.actionClass,
+    platform: input.config.platform,
+    targetSurface: input.config.targetSurface,
+    scope: input.config.approval.scope,
+    publicDestination: input.config.publicUrl,
+    affectedObject: input.config.affectedObject,
+    requestedBy: input.config.approval.requestedBy ?? input.agentName,
+    proposedApprovalId: input.config.approval.proposedApprovalId,
+    notes: input.config.approval.notes,
+  });
+
+  if (created.status === "approved") {
+    return validateApprovalRecord({
+      approvalId: created.approvalId,
+      scope: input.config.approval.scope,
+      localId: input.config.localId,
+      publicUrl: input.config.publicUrl,
+    });
+  }
+
+  throw new HermesRuntimeError(
+    `Human approval required. Review request ${created.approvalRequest.id} in Discord #drops-pending-approval.`,
+    "hermes_approval_required",
+    409,
+  );
+}
+
 export class HermesRuntimeError extends Error {
   constructor(
     message: string,
@@ -320,6 +497,7 @@ export async function runHermesJob<T>(
   const requestId = config.requestId ?? `req_${randomUUID()}`;
   const jobId = `hj_${randomUUID()}`;
   const agentName = config.agentName ?? configuredAgentName();
+  let effectiveApprovalId = config.approvalId;
 
   if (!databaseReadsEnabled()) {
     if (!hermesRuntimeEnabled()) {
@@ -330,7 +508,7 @@ export async function runHermesJob<T>(
       throw new HermesRuntimeError("Hermes kill switch is active.", "hermes_kill_switch");
     }
 
-    return work({ agentName, jobId, requestId });
+    return work({ agentName, jobId, requestId, approvalId: effectiveApprovalId });
   }
 
   const control = await ensureRuntimeControlRecord();
@@ -378,14 +556,38 @@ export async function runHermesJob<T>(
       ? new HermesRuntimeError("Hermes kill switch is active.", "hermes_kill_switch")
       : null;
 
-  if (blockedReason) {
+  let approvalBlockedReason: HermesRuntimeError | null = null;
+
+  if (!blockedReason) {
+    try {
+      effectiveApprovalId = await resolveHermesApproval({
+        requestId,
+        jobId,
+        agentName,
+        config,
+      });
+    } catch (error) {
+      approvalBlockedReason =
+        error instanceof HermesRuntimeError
+          ? error
+          : new HermesRuntimeError(
+              error instanceof Error ? error.message : "Hermes could not initialize the Discord approval flow.",
+              "hermes_approval_setup_error",
+            );
+    }
+  }
+
+  const runtimeBlockedReason = blockedReason ?? approvalBlockedReason;
+
+  if (runtimeBlockedReason) {
     await prisma.hermesJobRun.update({
       where: { id: jobId },
       data: {
         status: HermesJobStatus.BLOCKED,
         finishedAt: new Date(),
-        errorMessage: blockedReason.message,
-        summary: blockedSummary(blockedReason),
+        approvalId: effectiveApprovalId,
+        errorMessage: runtimeBlockedReason.message,
+        summary: blockedSummary(runtimeBlockedReason),
       },
     });
 
@@ -398,14 +600,14 @@ export async function runHermesJob<T>(
       actionClass: config.actionClass,
       platform: config.platform,
       affectedObject: config.affectedObject,
-      approvalId: config.approvalId,
+      approvalId: effectiveApprovalId,
       publicUrl: config.publicUrl,
       state: ActionState.FAILURE,
-      summary: blockedSummary(blockedReason),
+      summary: blockedSummary(runtimeBlockedReason),
     });
 
-    await setQueueState("needs_review", blockedReason.message);
-    throw blockedReason;
+    await setQueueState("needs_review", runtimeBlockedReason.message);
+    throw runtimeBlockedReason;
   }
 
   await prisma.hermesJobRun.update({
@@ -413,13 +615,14 @@ export async function runHermesJob<T>(
     data: {
       status: HermesJobStatus.RUNNING,
       startedAt: new Date(),
+      approvalId: effectiveApprovalId,
     },
   });
 
   await setQueueState("active", null);
 
   try {
-    const result = await work({ agentName, jobId, requestId });
+    const result = await work({ agentName, jobId, requestId, approvalId: effectiveApprovalId });
     const summary = config.summarizeSuccess?.(result) ?? `${config.jobName} completed successfully.`;
 
     await prisma.hermesJobRun.update({
@@ -441,7 +644,7 @@ export async function runHermesJob<T>(
       actionClass: config.actionClass,
       platform: config.platform,
       affectedObject: config.affectedObject,
-      approvalId: config.approvalId,
+      approvalId: effectiveApprovalId,
       publicUrl: config.publicUrl,
       state: ActionState.SUCCESS,
       summary,
@@ -472,7 +675,7 @@ export async function runHermesJob<T>(
       actionClass: config.actionClass,
       platform: config.platform,
       affectedObject: config.affectedObject,
-      approvalId: config.approvalId,
+      approvalId: effectiveApprovalId,
       publicUrl: config.publicUrl,
       state: ActionState.FAILURE,
       summary,

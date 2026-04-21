@@ -82,7 +82,7 @@ function envFlag(name, fallback) {
 }
 
 function isPlaceholder(value) {
-  return !value || value.startsWith("PLACEHOLDER_");
+  return !value || value.startsWith("PLACEHOLDER_") || value.startsWith("REPLACE_WITH_");
 }
 
 function keyKind(value) {
@@ -121,6 +121,125 @@ function requireValue(name) {
 function requireFlag(name, value) {
   if (env(name) !== value) {
     fail(`${name} must be ${value}.`);
+  }
+}
+
+function requireValues(names, mode, messagePrefix = "Missing required values") {
+  const missing = names.filter((name) => isPlaceholder(env(name)));
+
+  if (missing.length === 0) {
+    return;
+  }
+
+  const message = `${messagePrefix}: ${missing.join(", ")}.`;
+
+  if (mode === "launch") {
+    fail(message);
+  } else {
+    warn(message);
+  }
+}
+
+function validateDiscordWebhook(name, mode) {
+  const value = env(name);
+
+  if (isPlaceholder(value)) {
+    return;
+  }
+
+  if (!/^https:\/\/discord\.com\/api\/webhooks\/.+/.test(value)) {
+    const message = `${name} must be a Discord webhook URL.`;
+
+    if (mode === "launch") {
+      fail(message);
+    } else {
+      warn(message);
+    }
+  }
+}
+
+function validateDiscordNumericId(name, mode) {
+  const value = env(name);
+
+  if (isPlaceholder(value)) {
+    return;
+  }
+
+  if (!/^\d+$/.test(value)) {
+    const message = `${name} must be a numeric Discord snowflake.`;
+
+    if (mode === "launch") {
+      fail(message);
+    } else {
+      warn(message);
+    }
+  }
+}
+
+function validateDiscordApproverUserIds(mode) {
+  const value = env("DISCORD_APPROVER_USER_IDS");
+
+  if (isPlaceholder(value)) {
+    return;
+  }
+
+  const ids = value
+    .split(",")
+    .map((entry) => entry.trim())
+    .filter(Boolean);
+
+  if (ids.length === 0 || ids.some((id) => !/^\d+$/.test(id))) {
+    const message = "DISCORD_APPROVER_USER_IDS must be a comma-separated list of numeric Discord user IDs.";
+
+    if (mode === "launch") {
+      fail(message);
+    } else {
+      warn(message);
+    }
+  }
+}
+
+function validateDiscord(mode) {
+  const requiredWebhookEnv = [
+    "DISCORD_ALERTS_WEBHOOK_URL",
+    "DISCORD_OPS_LOG_WEBHOOK_URL",
+    "DISCORD_DEPLOYS_WEBHOOK_URL",
+    "DISCORD_CUSTOMER_ESCALATIONS_WEBHOOK_URL",
+    "DISCORD_POSTMORTEMS_WEBHOOK_URL",
+  ];
+  const optionalWebhookEnv = ["DISCORD_DROPS_PENDING_APPROVAL_WEBHOOK_URL"];
+  const requiredBotEnv = [
+    "DISCORD_APPLICATION_ID",
+    "DISCORD_PUBLIC_KEY",
+    "DISCORD_BOT_TOKEN",
+    "DISCORD_APPROVALS_CHANNEL_ID",
+    "DISCORD_DROPS_PENDING_APPROVAL_CHANNEL_ID",
+    "DISCORD_APPROVER_USER_IDS",
+  ];
+
+  requireValues(requiredWebhookEnv, mode, "Discord webhook configuration is incomplete");
+  requireValues(requiredBotEnv, mode, "Discord approval bot configuration is incomplete");
+  requireValues(optionalWebhookEnv, "locked", "Optional Discord webhook not configured");
+
+  for (const name of [...requiredWebhookEnv, ...optionalWebhookEnv]) {
+    validateDiscordWebhook(name, mode);
+  }
+
+  validateDiscordNumericId("DISCORD_APPLICATION_ID", mode);
+  validateDiscordNumericId("DISCORD_APPROVALS_CHANNEL_ID", mode);
+  validateDiscordNumericId("DISCORD_DROPS_PENDING_APPROVAL_CHANNEL_ID", mode);
+  validateDiscordApproverUserIds(mode);
+
+  const publicKey = env("DISCORD_PUBLIC_KEY");
+
+  if (!isPlaceholder(publicKey) && !/^[0-9a-fA-F]{64}$/.test(publicKey)) {
+    const message = "DISCORD_PUBLIC_KEY must be a 64-character hex string.";
+
+    if (mode === "launch") {
+      fail(message);
+    } else {
+      warn(message);
+    }
   }
 }
 
@@ -176,6 +295,7 @@ function validateShared(mode) {
   validatePublicUrl("APP_URL", mode);
   validatePublicUrl("PUBLIC_SITE_URL", mode);
   validateHermes();
+  validateDiscord(mode);
 
   if (env("TOKEN_WORK_FROZEN") !== "true") {
     fail("TOKEN_WORK_FROZEN must remain true until commerce launch is complete.");

@@ -58,6 +58,14 @@ enum ApprovalDecision {
   NEEDS_CHANGES
 }
 
+enum ApprovalRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+  EXPIRED
+}
+
 enum ActionState {
   SUCCESS
   FAILURE
@@ -106,12 +114,13 @@ model Local {
   createdAt          DateTime   @default(now())
   updatedAt          DateTime   @updatedAt
 
-  skus          LocalSku[]
-  assets        Asset[]
-  approvals     Approval[]
-  actionLogs    ActionLog[]
-  hermesJobRuns HermesJobRun[]
-  orderItems    OrderItem[]
+  skus             LocalSku[]
+  assets           Asset[]
+  approvals        Approval[]
+  approvalRequests ApprovalRequest[]
+  actionLogs       ActionLog[]
+  hermesJobRuns    HermesJobRun[]
+  orderItems       OrderItem[]
 }
 
 model LocalSku {
@@ -313,12 +322,44 @@ model HermesJobRun {
   summary        String?
   errorMessage   String?
 
-  local      Local?      @relation(fields: [localId], references: [id])
-  actionLogs ActionLog[]
+  local            Local?            @relation(fields: [localId], references: [id])
+  actionLogs       ActionLog[]
+  approvalRequests ApprovalRequest[]
 
   @@index([status, requestedAt])
   @@index([jobName, requestedAt])
   @@index([requestId])
+}
+
+model ApprovalRequest {
+  id                        String                @id
+  localId                   Int?
+  jobRunId                  String?
+  requestId                 String                @unique
+  actionClass               String
+  platform                  String
+  targetSurface             String
+  scope                     String
+  specVersion               String
+  publicDestination         String?
+  affectedObject            String?
+  requestedBy               String
+  proposedApprovalId        String?
+  status                    ApprovalRequestStatus @default(PENDING)
+  resolutionReason          String?
+  discordChannelId          String?
+  discordMessageId          String?               @unique
+  requestedAt               DateTime              @default(now())
+  resolvedAt                DateTime?
+  resolvedByDiscordUserId   String?
+  resolvedByDiscordUsername String?
+  approvalId                String?               @unique
+  notes                     String?
+
+  local  Local?        @relation(fields: [localId], references: [id])
+  jobRun HermesJobRun? @relation(fields: [jobRunId], references: [id], onDelete: SetNull)
+
+  @@index([status, requestedAt])
 }
 
 model TokenRegistryEntry {
